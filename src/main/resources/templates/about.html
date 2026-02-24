@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Castle Financial Services</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <i class="fas fa-landmark"></i> Castle
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/apply">Apply Now</a></li>
+                    <li><a href="/about" class="active">About</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+                <div class="nav-buttons">
+                    <div th:if="${username}" class="user-info">
+                        <span class="welcome-text">Welcome, <strong th:text="${username}"></strong></span>
+                        <!-- Show admin buttons only if user is admin -->
+                        <div th:if="${role == 'ADMIN'}" class="admin-buttons">
+                            <a href="/admin/dashboard" class="btn btn-primary">Admin Panel</a>
+                        </div>
+                        <form th:action="@{/logout}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-outline">Logout</button>
+                        </form>
+                    </div>
+                    <div th:unless="${username}" class="user-selection-buttons">
+                        <a href="/admin/login" class="btn btn-primary">Admin</a>
+                        <a href="/customer" class="btn btn-secondary">Customer</a>
+                    </div>
+                    <div th:unless="${username}" class="magic-home-link-container">
+                        <i class="fas fa-magic magic-icon"></i>
+                    </div>
+                    <div class="mobile-toggle">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <section class="about-section">
+        <div class="container">
+            <div class="about-container">
+                <div class="about-header">
+                    <h1>About Castle Financial Services</h1>
+                    <p>Your trusted partner for financial solutions</p>
+                </div>
+                
+                <div class="about-content">
+                    <div class="about-text">
+                        <h2>Our Story</h2>
+                        <p>Castle Financial Services was founded with a simple mission: to make financial services accessible, transparent, and easy to understand for everyone. We believe that getting the financial support you need should never be a stressful or confusing process.</p>
+                        
+                        <h2>Our Mission</h2>
+                        <p>We strive to make the loan application process simple, transparent, and accessible to everyone. We believe that financial services should be easy to understand and navigate, regardless of your financial background.</p>
+                        
+                        <h2>What We Offer</h2>
+                        <div class="features-grid">
+                            <div class="feature-card">
+                                <i class="fas fa-percentage"></i>
+                                <h3>Competitive Rates</h3>
+                                <p>Enjoy attractive interest rates tailored to your financial profile.</p>
+                            </div>
+                            <div class="feature-card">
+                                <i class="fas fa-bolt"></i>
+                                <h3>Quick Approval</h3>
+                                <p>Get approval decisions within 24 hours of application.</p>
+                            </div>
+                            <div class="feature-card">
+                                <i class="fas fa-shield-alt"></i>
+                                <h3>Secure Process</h3>
+                                <p>Your personal and financial data is protected with industry-leading security.</p>
+                            </div>
+                            <div class="feature-card">
+                                <i class="fas fa-headset"></i>
+                                <h3>Dedicated Support</h3>
+                                <p>Expert guidance throughout your loan journey.</p>
+                            </div>
+                        </div>
+                        
+                        <h2>Our Values</h2>
+                        <p>We operate with transparency, integrity, and customer-first approach. Your financial well-being is our top priority, and we work hard to provide you with the best possible service.</p>
+                        
+                        <div class="cta-section">
+                            <h3>Ready to Get Started?</h3>
+                            <p>Apply for a loan today and experience the Castle difference.</p>
+                            <a href="/apply" class="apply-btn">
+                                <i class="fas fa-paper-plane"></i> Apply Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Castle Financial Services</h3>
+                    <p>Your trusted partner for financial solutions</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/about">About</a></li>
+                        <li><a href="/loan-types">Loan Types</a></li>
+                        <li><a href="/apply">Apply Now</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                    <p><i class="fas fa-envelope"></i> info@castle.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Castle Financial Services. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

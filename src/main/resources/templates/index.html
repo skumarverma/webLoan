@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Castle Financial Services - Personal Loans</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <i class="fas fa-landmark"></i> Castle
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/apply">Apply Now</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+                <div class="nav-buttons">
+                    <div th:if="${username}" class="user-info">
+                        <span class="welcome-text">Welcome, <strong th:text="${username}"></strong></span>
+                        <!-- Show admin buttons only if user is admin -->
+                        <div th:if="${role == 'ADMIN'}" class="admin-buttons">
+                            <a href="/admin/dashboard" class="btn btn-primary">Admin Panel</a>
+                        </div>
+                        <form th:action="@{/logout}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-outline">Logout</button>
+                        </form>
+                    </div>
+                    <div th:unless="${username}" class="user-selection-buttons">
+                        <a href="/admin/login" class="btn btn-primary">Admin</a>
+                        <a href="/customer" class="btn btn-secondary">Customer</a>
+                    </div>
+                    <div th:unless="${username}" class="magic-home-link-container">
+                        <i class="fas fa-magic magic-icon"></i>
+                    </div>
+                </div>
+                <div class="mobile-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Loan for Salaried Employees</h1>
+                    <div class="loan-details">
+                        <div class="detail-item">
+                            <i class="fas fa-percentage"></i>
+                            <div>
+                                <h3>Interest Rate</h3>
+                                <p>10.99% Starting</p>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <div>
+                                <h3>Flexible Tenure</h3>
+                                <p>12 - 60 Months</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="eligibility-section">
+                        <h2>Eligibility Criteria</h2>
+                        <ul>
+                            <li><i class="fas fa-check"></i> Minimum age 21 years</li>
+                            <li><i class="fas fa-check"></i> Salaried employee with 6 months experience</li>
+                            <li><i class="fas fa-check"></i> Monthly income above ₹25,000</li>
+                            <li><i class="fas fa-check"></i> Valid ID and address proof</li>
+                        </ul>
+                    </div>
+                    
+
+                    
+                    <a href="/loan-types" class="apply-btn">
+                        <i class="fas fa-paper-plane"></i> Apply Now
+                    </a>
+                </div>
+                
+                <div class="hero-image">
+                    <img src="/images/front.jpg" alt="Loan Services" class="loan-image">
+                    <div class="features-overlay">
+                        <div class="feature-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Available 24x7</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-tag"></i>
+                            <span>Attractive Interest Rates</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-bolt"></i>
+                            <span>Quick Approval</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Zero Pre-payment Charges</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>No Hidden Charges</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2>Why Choose Castle?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-bolt"></i>
+                    <h3>Instant Approval</h3>
+                    <p>Get approval within 24 hours</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-calculator"></i>
+                    <h3>Flexible EMI</h3>
+                    <p>Choose your comfortable tenure</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Secure Process</h3>
+                    <p>Your data is 100% secure</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-headset"></i>
+                    <h3>Contact Us</h3>
+                    <p>We are here to help you..</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Castle Financial Services</h3>
+                    <p>Your trusted partner for financial solutions</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/loan-types">Loan Types</a></li>
+                        <li><a href="/loan-types">Apply Now</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                    <p><i class="fas fa-envelope"></i> info@castle.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Castle Financial Services. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

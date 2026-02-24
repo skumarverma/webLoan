@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Castle Financial Services</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <i class="fas fa-landmark"></i> Castle
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="/admin/dashboard" class="active">Admin Dashboard</a></li>
+                    <li><a href="/admin/applications">Applications details</a></li>
+                    <li><a href="/admin/users">Users</a></li>
+                    <li><a href="/admin/messages">Messages</a></li>
+                </ul>
+                <div class="nav-buttons">
+                    <div class="user-info">
+                        <span class="welcome-text">Welcome, <strong>Admin</strong></span>
+                        <form th:action="@{/admin/logout}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-outline">Logout</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="mobile-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Success/Error Messages -->
+    <div th:if="${success}" class="alert alert-success">
+        <i class="fas fa-check-circle"></i>
+        <span th:text="${success}"></span>
+    </div>
+    
+    <div th:if="${error}" class="alert alert-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span th:text="${error}"></span>
+    </div>
+
+    <!-- Admin Dashboard Section -->
+    <section class="admin-dashboard-section">
+        <div class="container">
+            <div class="dashboard-header">
+                <h1><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h1>
+                <p>Manage loan applications and customer data</p>
+            </div>
+            
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 th:text="${totalApplications}">0</h3>
+                        <p>Total Applications</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 th:text="${totalUsers}">0</h3>
+                        <p>Total Users</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 th:text="${approvedApplications}">0</h3>
+                        <p>Approved Applications</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 th:text="${pendingApplications}">0</h3>
+                        <p>Pending Applications</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dashboard-content">
+                <div class="recent-applications">
+                    <h2><i class="fas fa-history"></i> Recent Loan Applications</h2>
+                    <div class="applications-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Customer Name</th>
+                                    <th>Loan Type</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="app : ${recentApplications}">
+                                    <td th:text="${app.id}"></td>
+                                    <td th:text="${app.fullName}"></td>
+                                    <td th:text="${app.loanType}"></td>
+                                    <td th:text="${app.loanAmount != null} ? '₹' + ${#numbers.formatDecimal(app.loanAmount, 1, 2)} : '₹0'"></td>
+                                    <td>
+                                        <span th:class="'status-badge status-' + ${app.status != null ? app.status.toLowerCase() : 'pending'}" 
+                                              th:text="${app.status != null ? app.status : 'PENDING'}">Pending</span>
+                                    </td>
+                                    <td th:text="${app.applicationDate != null} ? ${#temporals.format(app.applicationDate, 'dd-MM-yyyy')} : 'N/A'"></td>
+                                    <td>
+                                        <button th:onclick="'manageStatus(' + ${app.id} + ')'" class="btn btn-sm btn-warning">
+                                            <i class="fas fa-edit"></i> Manage Status
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr th:if="${recentApplications == null or #lists.isEmpty(recentApplications)}">
+                                    <td colspan="7" class="text-center">No applications found</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Castle Financial Services</h3>
+                    <p>Your trusted partner for financial solutions</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Admin Links</h4>
+                    <ul>
+                        <li><a href="/admin/dashboard">Admin Dashboard</a></li>
+                        <li><a href="/admin/applications">Applications details</a></li>
+                        <li><a href="/admin/users">Users</a></li>
+                        <li><a href="/admin/messages">Messages</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                    <p><i class="fas fa-envelope"></i> admin@castle.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Castle Financial Services. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+        function manageStatus(applicationId) {
+            // Show modal with status options
+            const modal = document.createElement('div');
+            modal.className = 'status-modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-edit"></i> Manage Application Status</h3>
+                        <span class="close" onclick="closeModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <p>Select new status for application #${applicationId}:</p>
+                        <div class="status-options">
+                            <button class="status-btn status-pending" onclick="updateStatus(${applicationId}, 'PENDING')">
+                                <i class="fas fa-clock"></i> Pending
+                            </button>
+                            <button class="status-btn status-approved" onclick="updateStatus(${applicationId}, 'APPROVED')">
+                                <i class="fas fa-check-circle"></i> Approve
+                            </button>
+                            <button class="status-btn status-rejected" onclick="updateStatus(${applicationId}, 'REJECTED')">
+                                <i class="fas fa-times-circle"></i> Reject
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            modal.style.display = 'block';
+        }
+        
+        function closeModal() {
+            const modal = document.querySelector('.status-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+        
+        function updateStatus(applicationId, newStatus) {
+            // Send AJAX request to update status
+            fetch(`/admin/application/${applicationId}/status`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: newStatus })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Status updated successfully!');
+                    location.reload(); // Refresh page to show updated status
+                } else {
+                    alert('Failed to update status: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating status');
+            });
+            
+            closeModal();
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.querySelector('.status-modal');
+            if (modal && event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Messages - Admin Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <i class="fas fa-landmark"></i> Castle
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="/admin/dashboard">Admin Dashboard</a></li>
+                    <li><a href="/admin/applications">Applications details</a></li>
+                    <li><a href="/admin/users">Users</a></li>
+                    <li><a href="/admin/messages" class="active">Messages</a></li>
+                </ul>
+                <div class="nav-buttons">
+                    <div class="user-info">
+                        <span class="welcome-text">Welcome, <strong>Admin</strong></span>
+                        <form th:action="@{/admin/logout}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-outline">Logout</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="mobile-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Success/Error Messages -->
+    <div th:if="${success}" class="alert alert-success">
+        <i class="fas fa-check-circle"></i>
+        <span th:text="${success}"></span>
+    </div>
+    
+    <div th:if="${error}" class="alert alert-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span th:text="${error}"></span>
+    </div>
+
+    <!-- Messages Section -->
+    <section class="admin-messages-section">
+        <div class="container">
+            <div class="messages-header">
+                <h1><i class="fas fa-comments"></i> Customer Messages</h1>
+                <p>All messages sent by customers from the contact page</p>
+            </div>
+            
+            <div class="messages-controls">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search messages...">
+                    <i class="fas fa-search"></i>
+                </div>
+                
+                <div class="filters">
+                    <select id="statusFilter">
+                        <option value="">All Statuses</option>
+                        <option value="NEW">New</option>
+                        <option value="READ">Read</option>
+                        <option value="REPLIED">Replied</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="messages-table-container">
+                <table class="messages-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Subject</th>
+                            <th>Message</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="message : ${allMessages}">
+                            <td th:text="${message.id}">#1</td>
+                            <td th:text="${message.fullName}">John Doe</td>
+                            <td th:text="${message.email}">john@example.com</td>
+                            <td th:text="${message.phone ?: 'N/A'}">9876543210</td>
+                            <td th:text="${message.subject}">General Inquiry</td>
+                            <td class="message-preview" th:text="${#strings.abbreviate(message.message, 50)}">Sample message content...</td>
+                            <td>
+                                <span th:class="'status-badge status-' + ${message.status?.toLowerCase()}" 
+                                      th:text="${message.status ?: 'NEW'}">New</span>
+                            </td>
+                            <td th:text="${#temporals.format(message.createdDate, 'dd-MM-yyyy HH:mm')}">15-02-2026</td>
+                            <td>
+                                <button th:onclick="'viewMessage(' + ${message.id} + ')'" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                <button th:onclick="'markAsRead(' + ${message.id} + ')'" class="btn btn-sm btn-secondary">
+                                    <i class="fas fa-check"></i> Mark Read
+                                </button>
+                            </td>
+                        </tr>
+                        <tr th:if="${allMessages.empty}">
+                            <td colspan="9" class="text-center">No messages found</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="pagination" th:if="${allMessages.size()} > 0">
+                <span>Showing <span th:text="${allMessages.size()}"></span> of <span th:text="${totalMessages}"></span> messages</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Message Detail Modal -->
+    <div class="message-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-comment-dots"></i> Message Details</h3>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="message-detail">
+                    <div class="detail-row">
+                        <label>From:</label>
+                        <span id="messageFullName">John Doe</span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Email:</label>
+                        <span id="messageEmail">john@example.com</span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Phone:</label>
+                        <span id="messagePhone">9876543210</span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Subject:</label>
+                        <span id="messageSubject">General Inquiry</span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Date:</label>
+                        <span id="messageDate">15-02-2026 14:30</span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Status:</label>
+                        <span id="messageStatus" class="status-badge status-new">New</span>
+                    </div>
+                    <div class="detail-row full-width">
+                        <label>Message:</label>
+                        <div id="messageContent" class="message-full-content">
+                            This is the full message content that the customer sent through the contact form...
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="reply-section">
+                    <h4>Reply to Message</h4>
+                    <textarea id="replyText" placeholder="Type your reply here..."></textarea>
+                    <div class="reply-actions">
+                        <button class="btn btn-primary" onclick="sendReply()">
+                            <i class="fas fa-paper-plane"></i> Send Reply
+                        </button>
+                        <button class="btn btn-secondary" onclick="markAsRead(currentMessageId)">
+                            <i class="fas fa-check"></i> Mark as Read
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Castle Financial Services</h3>
+                    <p>Your trusted partner for financial solutions</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Admin Links</h4>
+                    <ul>
+                        <li><a href="/admin/dashboard">Admin Dashboard</a></li>
+                        <li><a href="/admin/applications">Applications details</a></li>
+                        <li><a href="/admin/users">Users</a></li>
+                        <li><a href="/admin/messages">Messages</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                    <p><i class="fas fa-envelope"></i> admin@castle.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Castle Financial Services. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+        let currentMessageId = null;
+        
+        function viewMessage(messageId) {
+            currentMessageId = messageId;
+            const modal = document.querySelector('.message-modal');
+            modal.style.display = 'block';
+            
+            // Fetch message details from server
+            fetch(`/admin/message/${messageId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.data) {
+                        const msg = data.data;
+                        document.getElementById('messageFullName').textContent = msg.fullName || 'N/A';
+                        document.getElementById('messageEmail').textContent = msg.email || 'N/A';
+                        document.getElementById('messagePhone').textContent = msg.phone || 'N/A';
+                        document.getElementById('messageSubject').textContent = msg.subject || 'N/A';
+                        
+                        // Date is already formatted from backend
+                        document.getElementById('messageDate').textContent = msg.createdDate || 'N/A';
+                        
+                        // Update status badge
+                        const statusEl = document.getElementById('messageStatus');
+                        statusEl.textContent = msg.status || 'NEW';
+                        statusEl.className = 'status-badge status-' + (msg.status ? msg.status.toLowerCase() : 'new');
+                        
+                        document.getElementById('messageContent').textContent = msg.message || 'No message content';
+                    } else {
+                        alert('Failed to load message details: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error loading message details');
+                });
+        }
+        
+        function closeModal() {
+            const modal = document.querySelector('.message-modal');
+            modal.style.display = 'none';
+        }
+        
+        function markAsRead(messageId) {
+            if (!messageId && currentMessageId) {
+                messageId = currentMessageId;
+            }
+            if (!messageId) {
+                alert('No message selected');
+                return;
+            }
+            // Send AJAX request to mark message as read
+            fetch(`/admin/message/${messageId}/read`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Message marked as read successfully!');
+                    location.reload(); // Refresh page to show updated status
+                } else {
+                    alert('Failed to mark message as read: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error marking message as read');
+            });
+        }
+        
+        function sendReply() {
+            const replyText = document.getElementById('replyText').value;
+            if (!replyText.trim()) {
+                alert('Please enter a reply message');
+                return;
+            }
+            
+            // In a real implementation, this would send the reply to the customer
+            alert('Reply sent successfully! (In a real implementation, this would send an email to the customer)');
+            document.getElementById('replyText').value = '';
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.querySelector('.message-modal');
+            if (modal && event.target === modal) {
+                closeModal();
+            }
+        }
+        
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+        
+        // Filter functionality
+        document.getElementById('statusFilter').addEventListener('change', function() {
+            const statusFilter = this.value;
+            const rows = document.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                const statusCell = row.cells[6].textContent.trim();
+                if (statusFilter === '' || statusCell.includes(statusFilter)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    </script>
+    
+    <style>
+        /* Messages Section Specific Styles */
+        .admin-messages-section {
+            padding: 80px 0;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+        
+        .messages-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .messages-header h1 {
+            font-size: 2.5rem;
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .messages-header p {
+            font-size: 1.2rem;
+            color: #64748b;
+        }
+        
+        .messages-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .search-box {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #f59e0b;
+        }
+        
+        .search-box i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .filters select {
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            min-width: 180px;
+        }
+        
+        .filters select:focus {
+            outline: none;
+            border-color: #f59e0b;
+        }
+        
+        .messages-table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            overflow-x: auto;
+        }
+        
+        .messages-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .messages-table th,
+        .messages-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .messages-table th {
+            background: #f1f5f9;
+            font-weight: 600;
+            color: #334155;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .messages-table td {
+            color: #475569;
+        }
+        
+        .messages-table tr:hover {
+            background: #f8fafc;
+        }
+        
+        .message-preview {
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .pagination {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px;
+            color: #64748b;
+            font-size: 1rem;
+        }
+        
+        /* Message Modal Styles */
+        .message-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid #e2e8f0;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 25px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .close {
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .close:hover {
+            transform: scale(1.2);
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .message-detail {
+            margin-bottom: 30px;
+        }
+        
+        .detail-row {
+            display: flex;
+            margin-bottom: 15px;
+            align-items: flex-start;
+        }
+        
+        .detail-row.full-width {
+            flex-direction: column;
+        }
+        
+        .detail-row label {
+            font-weight: 600;
+            color: #334155;
+            min-width: 100px;
+            margin-right: 15px;
+        }
+        
+        .message-full-content {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+        
+        .reply-section {
+            border-top: 2px solid #e2e8f0;
+            padding-top: 25px;
+        }
+        
+        .reply-section h4 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .reply-section textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: Arial, sans-serif;
+            resize: vertical;
+        }
+        
+        .reply-section textarea:focus {
+            outline: none;
+            border-color: #f59e0b;
+        }
+        
+        .reply-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-sm {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            margin: 2px;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .messages-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                max-width: 100%;
+            }
+            
+            .filters {
+                flex-direction: column;
+            }
+            
+            .filters select {
+                width: 100%;
+            }
+            
+            .detail-row {
+                flex-direction: column;
+                margin-bottom: 10px;
+            }
+            
+            .detail-row label {
+                margin-bottom: 5px;
+            }
+            
+            .reply-actions {
+                flex-direction: column;
+            }
+            
+            .messages-table th,
+            .messages-table td {
+                padding: 10px 8px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</body>
+</html>

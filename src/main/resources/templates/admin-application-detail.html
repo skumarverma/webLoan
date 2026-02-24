@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Details - Admin Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <i class="fas fa-landmark"></i> Castle
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="/admin/dashboard">Dashboard</a></li>
+                    <li><a href="/admin/applications" class="active">Loan Applications</a></li>
+                    <li><a href="/admin/users">Users</a></li>
+                    <li><a href="/admin/messages">Messages</a></li>
+                </ul>
+                <div class="nav-buttons">
+                    <div class="user-info">
+                        <span class="welcome-text">Welcome, <strong>Admin</strong></span>
+                        <form th:action="@{/admin/logout}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-outline">Logout</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="mobile-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Application Details Section -->
+    <section class="application-details-section">
+        <div class="container">
+            <div class="details-container">
+                <div class="details-header">
+                    <div class="header-content">
+                        <div class="title-section">
+                            <h1><i class="fas fa-file-contract"></i> Application Details</h1>
+                            <p>Application ID: <strong th:text="${'#APP' + application.id}"></strong></p>
+                        </div>
+                        <div class="header-actions">
+                            <a href="/admin/applications" class="btn btn-outline">
+                                <i class="fas fa-arrow-left"></i> Back to Applications
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="application-summary">
+                    <div class="summary-card">
+                        <div class="summary-item">
+                            <h4>Application ID</h4>
+                            <p th:text="${application.id}">#12345</p>
+                        </div>
+                        <div class="summary-item">
+                            <h4>Applicant Name</h4>
+                            <p th:text="${application.fullName}">John Doe</p>
+                        </div>
+                        <div class="summary-item">
+                            <h4>Loan Type</h4>
+                            <p th:text="${application.loanType}">Personal Loan</p>
+                        </div>
+                        <div class="summary-item">
+                            <h4>Loan Amount</h4>
+                            <p th:text="'₹' + ${#numbers.formatDecimal(application.loanAmount, 1, 2)}">₹50,000</p>
+                        </div>
+                        <div class="summary-item">
+                            <h4>Status</h4>
+                            <span th:class="'status-badge-large status-' + ${application.status?.toLowerCase()}" 
+                                  th:text="${application.status}">PENDING</span>
+                        </div>
+                        <div class="summary-item">
+                            <h4>Applied On</h4>
+                            <p th:text="${#temporals.format(application.applicationDate, 'dd MMMM yyyy, HH:mm')}">15 Feb 2026</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Customer Information Section -->
+                <div class="customer-info-section">
+                    <h2><i class="fas fa-user-circle"></i> Customer Information</h2>
+                    <div class="info-grid">
+                        <!-- Personal Details -->
+                        <div class="info-card">
+                            <h3><i class="fas fa-user"></i> Personal Details</h3>
+                            <div class="info-item">
+                                <label>Full Name:</label>
+                                <span th:text="${application.fullName}">John Doe</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Email:</label>
+                                <span th:text="${application.email}">john@example.com</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Phone:</label>
+                                <span th:text="${application.phone}">9876543210</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Loan Details -->
+                        <div class="info-card">
+                            <h3><i class="fas fa-money-bill-wave"></i> Loan Details</h3>
+                            <div class="info-item">
+                                <label>Loan Type:</label>
+                                <span th:text="${application.loanType}">Personal Loan</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Loan Amount:</label>
+                                <span th:text="'₹' + ${#numbers.formatDecimal(application.loanAmount, 1, 2)}">₹50,000</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Application Date:</label>
+                                <span th:text="${#temporals.format(application.applicationDate, 'dd MMMM yyyy, HH:mm')}">15 Feb 2026</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Employment Details -->
+                        <div class="info-card">
+                            <h3><i class="fas fa-briefcase"></i> Employment Details</h3>
+                            <div class="info-item">
+                                <label>Employment Status:</label>
+                                <span th:text="${application.employmentStatus}">Salaried</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Monthly Income:</label>
+                                <span th:text="'₹' + ${#numbers.formatDecimal(application.monthlyIncome, 1, 2)}">₹45,000</span>
+                            </div>
+                            <div class="info-item" th:if="${application.companyName}">
+                                <label>Company Name:</label>
+                                <span th:text="${application.companyName}">Tech Solutions Inc.</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Address Information -->
+                        <div class="info-card">
+                            <h3><i class="fas fa-map-marker-alt"></i> Address Information</h3>
+                            <div class="info-item">
+                                <label>Address:</label>
+                                <span th:text="${application.address}">123 Main Street, Apartment 4B</span>
+                            </div>
+                            <div class="info-item">
+                                <label>City:</label>
+                                <span th:text="${application.city}">Mumbai</span>
+                            </div>
+                            <div class="info-item">
+                                <label>State:</label>
+                                <span th:text="${application.state}">Maharashtra</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Pincode:</label>
+                                <span th:text="${application.pincode}">400001</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Status Management Section -->
+                <div class="status-management">
+                    <h2><i class="fas fa-sliders-h"></i> Manage Application Status</h2>
+                    <div class="status-form">
+                        <div class="form-group">
+                            <label>Application ID: <span th:text="${application.id}"></span></label>
+                        </div>
+                        
+                        <div class="status-options">
+                            <div class="status-option">
+                                <input type="radio" id="pending" name="status" value="PENDING" th:checked="${application.status == 'PENDING'}">
+                                <label for="pending">Pending</label>
+                            </div>
+                            
+                            <div class="status-option">
+                                <input type="radio" id="approved" name="status" value="APPROVED" th:checked="${application.status == 'APPROVED'}">
+                                <label for="approved">Approved</label>
+                            </div>
+                            
+                            <div class="status-option">
+                                <input type="radio" id="rejected" name="status" value="REJECTED" th:checked="${application.status == 'REJECTED'}">
+                                <label for="rejected">Rejected</label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button class="btn btn-primary" onclick="updateStatus()" id="updateStatusBtn">
+                                <i class="fas fa-save"></i> Update Status
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Castle Financial Services</h3>
+                    <p>Your trusted partner for financial solutions</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Admin Links</h4>
+                    <ul>
+                        <li><a href="/admin/dashboard">Dashboard</a></li>
+                        <li><a href="/admin/applications">Loan Applications</a></li>
+                        <li><a href="/admin/users">User Management</a></li>
+                        <li><a href="/admin/messages">Messages</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                    <p><i class="fas fa-envelope"></i> admin@castle.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Castle Financial Services. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+        function updateStatus() {
+            const selectedStatus = document.querySelector('input[name="status"]:checked').value;
+            const applicationId = [[${application.id}]];
+            
+            // Send AJAX request to update status
+            fetch(`/admin/application/${applicationId}/status`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: selectedStatus })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Status updated successfully!');
+                    location.reload(); // Refresh page to show updated status
+                } else {
+                    alert('Failed to update status: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating status');
+            });
+        }
+    </script>
+    
+    <style>
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .title-section {
+            flex: 1;
+        }
+        
+        .header-actions {
+            flex-shrink: 0;
+        }
+        
+        .application-summary {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            margin: 20px 0;
+        }
+        
+        .summary-card {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .summary-item {
+            text-align: center;
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f8fafc;
+        }
+        
+        .summary-item h4 {
+            margin: 0 0 10px 0;
+            color: #475569;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .summary-item p, .summary-item span {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #1e293b;
+        }
+        
+        .status-badge-large {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-management {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            margin: 30px 0;
+        }
+        
+        .status-management h2 {
+            color: #1e3c72;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .status-options {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .status-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+        
+        .status-option:hover {
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
+        
+        .status-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .status-option label {
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-start;
+            gap: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .form-group span {
+            font-size: 1.2rem;
+            color: #475569;
+            font-weight: 500;
+        }
+        
+        /* Customer Info Section */
+        .customer-info-section {
+            margin: 30px 0;
+        }
+        
+        .customer-info-section h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .info-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .info-card h3 {
+            color: #1e3c72;
+            margin: 0 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-item {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .info-item label {
+            display: block;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 4px;
+            font-size: 0.95rem;
+        }
+        
+        .info-item span {
+            display: block;
+            color: #1e293b;
+            font-weight: 500;
+            word-break: break-word;
+        }
+    </style>
+</body>
+</html>.          <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Castle Financial Services</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <i class="fas fa-landmark"></i> Castle
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/apply">Apply Now</a></li>
+                    <li><a href="/about" class="active">About</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+                <div class="nav-buttons">
+                    <div th:if="${username}" class="user-info">
+                        <span class="welcome-text">Welcome, <strong th:text="${username}"></strong></span>
+                        <!-- Show admin buttons only if user is admin -->
+                        <div th:if="${role == 'ADMIN'}" class="admin-buttons">
+                            <a href="/admin/dashboard" class="btn btn-primary">Admin Panel</a>
+                        </div>
+                        <form th:action="@{/logout}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-outline">Logout</button>
+                        </form>
+                    </div>
+                    <div th:unless="${username}" class="user-selection-buttons">
+                        <a href="/admin/login" class="btn btn-primary">Admin</a>
+                        <a href="/customer" class="btn btn-secondary">Customer</a>
+                    </div>
+                    <div th:unless="${username}" class="magic-home-link-container">
+                        <i class="fas fa-magic magic-icon"></i>
+                    </div>
+                    <div class="mobile-toggle">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <section class="about-section">
+        <div class="container">
+            <div class="about-container">
+                <div class="about-header">
+                    <h1>About Castle Financial Services</h1>
+                    <p>Your trusted partner for financial solutions</p>
+                </div>
+                
+                <div class="about-content">
+                    <div class="about-text">
+                        <h2>Our Story</h2>
+                        <p>Castle Financial Services was founded with a simple mission: to make financial services accessible, transparent, and easy to understand for everyone. We believe that getting the financial support you need should never be a stressful or confusing process.</p>
+                        
+                        <h2>Our Mission</h2>
+                        <p>We strive to make the loan application process simple, transparent, and accessible to everyone. We believe that financial services should be easy to understand and navigate, regardless of your financial background.</p>
+                        
+                        <h2>What We Offer</h2>
+                        <div class="features-grid">
+                            <div class="feature-card">
+                                <i class="fas fa-percentage"></i>
+                                <h3>Competitive Rates</h3>
+                                <p>Enjoy attractive interest rates tailored to your financial profile.</p>
+                            </div>
+                            <div class="feature-card">
+                                <i class="fas fa-bolt"></i>
+                                <h3>Quick Approval</h3>
+                                <p>Get approval decisions within 24 hours of application.</p>
+                            </div>
+                            <div class="feature-card">
+                                <i class="fas fa-shield-alt"></i>
+                                <h3>Secure Process</h3>
+                                <p>Your personal and financial data is protected with industry-leading security.</p>
+                            </div>
+                            <div class="feature-card">
+                                <i class="fas fa-headset"></i>
+                                <h3>Dedicated Support</h3>
+                                <p>Expert guidance throughout your loan journey.</p>
+                            </div>
+                        </div>
+                        
+                        <h2>Our Values</h2>
+                        <p>We operate with transparency, integrity, and customer-first approach. Your financial well-being is our top priority, and we work hard to provide you with the best possible service.</p>
+                        
+                        <div class="cta-section">
+                            <h3>Ready to Get Started?</h3>
+                            <p>Apply for a loan today and experience the Castle difference.</p>
+                            <a href="/apply" class="apply-btn">
+                                <i class="fas fa-paper-plane"></i> Apply Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Castle Financial Services</h3>
+                    <p>Your trusted partner for financial solutions</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/about">About</a></li>
+                        <li><a href="/loan-types">Loan Types</a></li>
+                        <li><a href="/apply">Apply Now</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                    <p><i class="fas fa-envelope"></i> info@castle.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Castle Financial Services. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>.       

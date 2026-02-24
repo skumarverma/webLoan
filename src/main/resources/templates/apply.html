@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for Loan - Castle Financial Services</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <i class="fas fa-landmark"></i> Castle
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/loan-types">Apply Now</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+                <div class="nav-buttons">
+                    <div th:if="${username}" class="user-info">
+                        <span class="welcome-text">Welcome, <strong th:text="${username}"></strong></span>
+                        <!-- Show admin buttons only if user is admin -->
+                        <div th:if="${role == 'ADMIN'}" class="admin-buttons">
+                            <a href="/admin/dashboard" class="btn btn-primary">Admin Panel</a>
+                        </div>
+                        <form th:action="@{/logout}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-outline">Logout</button>
+                        </form>
+                    </div>
+                    <div th:unless="${username}">
+                        <a href="/" class="magic-home-link">
+                            <i class="fas fa-magic magic-icon"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="mobile-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Application Form Section -->
+    <section class="apply-section">
+        <div class="container">
+            <div class="form-container">
+                <div class="form-header">
+                    <h1>Apply for Loan</h1>
+                    <p>Fill out the form below to apply for your loan</p>
+                </div>
+                
+                <!-- Success/Error Messages -->
+                <div th:if="${success}" class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <span th:text="${success}"></span>
+                </div>
+                
+                <div th:if="${error}" class="alert alert-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span th:text="${error}"></span>
+                </div>
+                
+                <form th:action="@{/apply}" th:object="${loanApplication}" method="post" class="loan-form" id="loanApplicationForm">
+                    <!-- Personal Information -->
+                    <div class="form-section">
+                        <h2><i class="fas fa-user"></i> Personal Information</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fullName">Full Name *</label>
+                                <input type="text" id="fullName" th:field="*{fullName}" required autocomplete="name">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email Address *</label>
+                                <input type="email" id="email" th:field="*{email}" required autocomplete="email">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="phone">Phone Number *</label>
+                                <input type="tel" id="phone" th:field="*{phone}" placeholder="98765 43210" required autocomplete="tel">
+                            </div>
+                            <div class="form-group">
+                                <label for="loanType">Loan Type *</label>
+                                <select id="loanType" th:field="*{loanType}" required>
+                                    <option value="">Select Loan Type</option>
+                                    <option value="Personal Loan">Personal Loan</option>
+                                    <option value="Home Loan">Home Loan</option>
+                                    <option value="Car Loan">Car Loan</option>
+                                    <option value="Business Loan">Business Loan</option>
+                                    <option value="Loan Against Property">Loan Against Property</option>
+                                    <option value="Mudra Loan">Mudra Loan</option>
+                                    <option value="Overdraft Loan">Overdraft Loan</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Loan Details -->
+                    <div class="form-section">
+                        <h2><i class="fas fa-file-invoice-dollar"></i> Loan Details</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="loanAmount">Loan Amount *</label>
+                                <input type="number" id="loanAmount" th:field="*{loanAmount}" 
+                                       min="10000" max="5000000" placeholder="Enter amount in ₹" required>
+                                <small>Minimum ₹10,000 - Maximum ₹50,00,000</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="employmentStatus">Employment Status *</label>
+                                <select id="employmentStatus" th:field="*{employmentStatus}" required>
+                                    <option value="">Select Employment Status</option>
+                                    <option value="Salaried">Salaried</option>
+                                    <option value="Self Employed">Self Employed</option>
+                                    <option value="Business Owner">Business Owner</option>
+                                    <option value="Freelancer">Freelancer</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="monthlyIncome">Monthly Income *</label>
+                                <input type="number" id="monthlyIncome" th:field="*{monthlyIncome}" 
+                                       min="10000" placeholder="Enter income in ₹" required>
+                                <small>Minimum ₹10,000 per month</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="companyName">Company Name</label>
+                                <input type="text" id="companyName" th:field="*{companyName}">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Address Information -->
+                    <div class="form-section">
+                        <h2><i class="fas fa-home"></i> Address Information</h2>
+                        <div class="form-group">
+                            <label for="address">Full Address *</label>
+                            <textarea id="address" th:field="*{address}" rows="3" required></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="city">City *</label>
+                                <input type="text" id="city" th:field="*{city}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="state">State *</label>
+                                <input type="text" id="state" th:field="*{state}" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="pincode">Pincode *</label>
+                            <input type="text" id="pincode" th:field="*{pincode}" required>
+                        </div>
+                    </div>
+                    
+                    <!-- Terms and Conditions -->
+                    <div class="form-section">
+                        <div class="terms-section">
+                            <label class="checkbox-container">
+                                <input type="checkbox" required>
+                                <span class="checkmark"></span>
+                                I agree to the <a href="#" class="terms-link">Terms and Conditions</a> and 
+                                <a href="#" class="privacy-link">Privacy Policy</a> *
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Submit Application
+                        </button>
+                        <button type="reset" class="btn btn-secondary">
+                            <i class="fas fa-redo"></i> Reset Form
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Castle Financial Services</h3>
+                    <p>Your trusted partner for financial solutions</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/loan-types">Loan Types</a></li>
+                        <li><a href="/apply">Apply Now</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                    <p><i class="fas fa-envelope"></i> info@Castle.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Castle Financial Services. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Loan Type - Castle Financial Services</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <i class="fas fa-landmark"></i> Castle
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/loan-types" class="active">Apply Now</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+                <div class="nav-buttons">
+                    <div th:if="${username}" class="user-info">
+                        <span class="welcome-text">Welcome, <strong th:text="${username}"></strong></span>
+                        <!-- Show admin buttons only if user is admin -->
+                        <div th:if="${role == 'ADMIN'}" class="admin-buttons">
+                            <a href="/admin/dashboard" class="btn btn-primary">Admin Panel</a>
+                        </div>
+                        <form th:action="@{/logout}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-outline">Logout</button>
+                        </form>
+                    </div>
+                    <div th:unless="${username}">
+                        <a href="/" class="magic-home-link">
+                            <i class="fas fa-magic magic-icon"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="mobile-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Loan Types Selection Section -->
+    <section class="loan-types-section">
+        <div class="container">
+            <div class="page-header">
+                <h1>Choose Your Loan Type</h1>
+                <p>Find the perfect loan option tailored to your needs</p>
+            </div>
+            
+            <!-- Loan Types Grid -->
+            <div class="loan-types-grid">
+                <div class="loan-card" data-loan-type="personal">
+                    <div class="loan-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3>Personal Loan</h3>
+                    <p>Flexible financing for personal needs</p>
+                    <div class="loan-features">
+                        <span class="rate">10.99% onwards</span>
+                        <span class="tenure">12-60 months</span>
+                    </div>
+                    <button class="select-btn" onclick="showDocuments('personal')">
+                        Select Loan
+                    </button>
+                </div>
+                
+                <div class="loan-card" data-loan-type="home">
+                    <div class="loan-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3>Home Loan</h3>
+                    <p>Finance your dream home with competitive rates</p>
+                    <div class="loan-features">
+                        <span class="rate">8.50% onwards</span>
+                        <span class="tenure">Up to 30 years</span>
+                    </div>
+                    <button class="select-btn" onclick="showDocuments('home')">
+                        Select Loan
+                    </button>
+                </div>
+                
+                <div class="loan-card" data-loan-type="car">
+                    <div class="loan-icon">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <h3>Car Loan</h3>
+                    <p>Drive away in your new car today</p>
+                    <div class="loan-features">
+                        <span class="rate">9.25% onwards</span>
+                        <span class="tenure">1-7 years</span>
+                    </div>
+                    <button class="select-btn" onclick="showDocuments('car')">
+                        Select Loan
+                    </button>
+                </div>
+                
+                <div class="loan-card" data-loan-type="business">
+                    <div class="loan-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>Business Loan</h3>
+                    <p>Fund your business growth and expansion</p>
+                    <div class="loan-features">
+                        <span class="rate">12.00% onwards</span>
+                        <span class="tenure">1-10 years</span>
+                    </div>
+                    <button class="select-btn" onclick="showDocuments('business')">
+                        Select Loan
+                    </button>
+                </div>
+                
+                <div class="loan-card" data-loan-type="lap">
+                    <div class="loan-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3>Loan Against Property</h3>
+                    <p>Borrow against your property value</p>
+                    <div class="loan-features">
+                        <span class="rate">11.50% onwards</span>
+                        <span class="tenure">Up to 15 years</span>
+                    </div>
+                    <button class="select-btn" onclick="showDocuments('lap')">
+                        Select Loan
+                    </button>
+                </div>
+                
+                <div class="loan-card" data-loan-type="mudra">
+                    <div class="loan-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3>Mudra Loan</h3>
+                    <p>Government-backed loans for micro businesses</p>
+                    <div class="loan-features">
+                        <span class="rate">7.50% onwards</span>
+                        <span class="tenure">Up to 5 years</span>
+                    </div>
+                    <button class="select-btn" onclick="showDocuments('mudra')">
+                        Select Loan
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Document Requirements Section -->
+            <div class="documents-section" id="documentsSection" style="display: none;">
+                <h2 id="documentTitle">Required Documents</h2>
+                <div class="documents-grid" id="documentsGrid">
+                    <!-- Documents will be populated by JavaScript -->
+                </div>
+                
+                <!-- Apply Button -->
+                <div class="apply-section">
+                    <h3>Ready to Apply?</h3>
+                    <p>Click the button below to proceed with your loan application</p>
+                    <button class="apply-btn" id="applyBtn" onclick="proceedToApplication()">
+                        <i class="fas fa-paper-plane"></i> Apply Here
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Castle Financial Services</h3>
+                    <p>Your trusted partner for financial solutions</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/loan-types">Loan Types</a></li>
+                        <li><a href="/apply">Apply Now</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                    <p><i class="fas fa-envelope"></i> info@Castle.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Castle Financial Services. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+        // Document requirements for each loan type
+        const documentRequirements = {
+            personal: [
+                { icon: 'fas fa-file-alt', title: 'Identity Proof', desc: 'Aadhar Card, PAN Card, Passport' },
+                { icon: 'fas fa-home', title: 'Address Proof', desc: 'Utility Bill, Lease Agreement' },
+                { icon: 'fas fa-file-invoice', title: 'Income Proof', desc: 'Salary Slips, Bank Statements' },
+                { icon: 'fas fa-bank', title: 'Bank Statements', desc: 'Last 6 months statements' },
+                { icon: 'fas fa-id-card', title: 'Employment Proof', desc: 'Employment Letter' }
+            ],
+            home: [
+                { icon: 'fas fa-file-alt', title: 'Identity Proof', desc: 'Aadhar Card, PAN Card, Passport' },
+                { icon: 'fas fa-home', title: 'Address Proof', desc: 'Utility Bills, Lease Agreement' },
+                { icon: 'fas fa-file-invoice', title: 'Income Proof', desc: 'Salary Slips, ITR, Bank Statements' },
+                { icon: 'fas fa-building', title: 'Property Documents', desc: 'Sale Deed, Tax Receipts' },
+                { icon: 'fas fa-hand-holding-usd', title: 'Down Payment Proof', desc: 'Bank Statement' }
+            ],
+            car: [
+                { icon: 'fas fa-file-alt', title: 'Identity Proof', desc: 'Aadhar Card, PAN Card, Driving License' },
+                { icon: 'fas fa-home', title: 'Address Proof', desc: 'Utility Bills, Lease Agreement' },
+                { icon: 'fas fa-file-invoice', title: 'Income Proof', desc: 'Salary Slips, ITR, Bank Statements' },
+                { icon: 'fas fa-car', title: 'Vehicle Documents', desc: 'RC Book, Insurance' },
+                { icon: 'fas fa-bank', title: 'Bank Statements', desc: 'Last 6 months statements' }
+            ],
+            business: [
+                { icon: 'fas fa-file-alt', title: 'Identity Proof', desc: 'Aadhar Card, PAN Card, Passport' },
+                { icon: 'fas fa-home', title: 'Address Proof', desc: 'Utility Bills, Lease Agreement' },
+                { icon: 'fas fa-file-invoice', title: 'Financial Statements', desc: 'ITR, Balance Sheet, P&L' },
+                { icon: 'fas fa-briefcase', title: 'Business Documents', desc: 'Registration Certificate' },
+                { icon: 'fas fa-bank', title: 'Business Bank Statements', desc: 'Last 12 months statements' }
+            ],
+            lap: [
+                { icon: 'fas fa-file-alt', title: 'Identity Proof', desc: 'Aadhar Card, PAN Card, Passport' },
+                { icon: 'fas fa-home', title: 'Address Proof', desc: 'Utility Bills, Lease Agreement' },
+                { icon: 'fas fa-file-invoice', title: 'Income Proof', desc: 'Salary Slips, ITR' },
+                { icon: 'fas fa-building', title: 'Property Documents', desc: 'Title Deed, Tax Receipts' },
+                { icon: 'fas fa-bank', title: 'Bank Statements', desc: 'Last 6 months statements' }
+            ],
+            mudra: [
+                { icon: 'fas fa-file-alt', title: 'Identity Proof', desc: 'Aadhar Card, PAN Card' },
+                { icon: 'fas fa-home', title: 'Address Proof', desc: 'Utility Bills, Lease Agreement' },
+                { icon: 'fas fa-briefcase', title: 'Business Plan', desc: 'Detailed business proposal' },
+                { icon: 'fas fa-file-invoice', title: 'Income Proof', desc: 'Previous year ITR' },
+                { icon: 'fas fa-bank', title: 'Bank Statements', desc: 'Last 6 months statements' }
+            ]
+        };
+
+        function showDocuments(loanType) {
+            const documentsSection = document.getElementById('documentsSection');
+            const documentsGrid = document.getElementById('documentsGrid');
+            const documentTitle = document.getElementById('documentTitle');
+            const applyBtn = document.getElementById('applyBtn');
+            
+            // Update title
+            documentTitle.textContent = `${getLoanTypeName(loanType)} - Required Documents`;
+            
+            // Populate documents
+            documentsGrid.innerHTML = '';
+            const docs = documentRequirements[loanType];
+            
+            docs.forEach(doc => {
+                const docCard = document.createElement('div');
+                docCard.className = 'doc-card';
+                docCard.innerHTML = `
+                    <div class="doc-icon">
+                        <i class="${doc.icon}"></i>
+                    </div>
+                    <div class="doc-content">
+                        <h4>${doc.title}</h4>
+                        <p>${doc.desc}</p>
+                    </div>
+                `;
+                documentsGrid.appendChild(docCard);
+            });
+            
+            // Store selected loan type in button
+            applyBtn.setAttribute('data-loan-type', loanType);
+            
+            // Show the section
+            documentsSection.style.display = 'block';
+            
+            // Scroll to documents section
+            documentsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function getLoanTypeName(type) {
+            const names = {
+                personal: 'Personal Loan',
+                home: 'Home Loan',
+                car: 'Car Loan',
+                business: 'Business Loan',
+                lap: 'Loan Against Property',
+                mudra: 'Mudra Loan'
+            };
+            return names[type] || type;
+        }
+
+        function proceedToApplication() {
+            const loanType = document.getElementById('applyBtn').getAttribute('data-loan-type');
+            window.location.href = `/apply?loanType=${encodeURIComponent(loanType)}`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Castle Financial Services</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <i class="fas fa-landmark"></i> Castle
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/apply">Apply Now</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/dashboard" class="active">Dashboard</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+                <div class="nav-buttons">
+                    <div th:if="${username}" class="user-info">
+                        <span class="welcome-text">Welcome, <strong th:text="${username}"></strong></span>
+                        <!-- Show admin buttons only if user is admin -->
+                        <div th:if="${role == 'ADMIN'}" class="admin-buttons">
+                            <a href="/admin/dashboard" class="btn btn-primary">Admin Panel</a>
+                        </div>
+                        <a href="/profile" class="btn btn-outline">Profile</a>
+                        <form th:action="@{/logout}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-primary">Logout</button>
+                        </form>
+                    </div>
+                    <div th:unless="${username}">
+                        <a href="/" class="magic-home-link">
+                            <i class="fas fa-magic magic-icon"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="mobile-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Section -->
+    <section class="dashboard-section">
+        <div class="container">
+            <div class="dashboard-container">
+                <div class="dashboard-header">
+                    <h1>Welcome to Your Dashboard</h1>
+                    <p>Manage your loan applications and account details</p>
+                </div>
+                
+                <div class="dashboard-content">
+                    <div class="dashboard-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-file-contract"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 th:text="${totalApplications}">0</h3>
+                                <p>Total Applications</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 th:text="${pendingCount}">0</h3>
+                                <p>Pending</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 th:text="${approvedCount}">0</h3>
+                                <p>Approved</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-times-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 th:text="${rejectedCount}">0</h3>
+                                <p>Rejected</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="user-applications">
+                        <h2><i class="fas fa-list"></i> My Loan Applications</h2>
+                        <div class="applications-table-container">
+                            <table class="applications-table">
+                                <thead>
+                                    <tr>
+                                        <th>Application ID</th>
+                                        <th>Loan Type</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Applied Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="app : ${userApplications}">
+                                        <td th:text="${'#APP' + app.id}"></td>
+                                        <td th:text="${app.loanType}"></td>
+                                        <td th:text="'₹' + ${#numbers.formatDecimal(app.loanAmount, 1, 2)}"></td>
+                                        <td>
+                                            <span th:class="'status-badge status-' + ${app.status?.toLowerCase()}" 
+                                                  th:text="${app.status == 'APPROVED' ? 'RUNNING' : 
+                                                           app.status == 'REJECTED' ? 'COMPLETED' : 
+                                                           app.status}">PENDING</span>
+                                        </td>
+                                        <td th:text="${#temporals.format(app.applicationDate, 'dd-MM-yyyy')}"></td>
+                                        <td>
+                                            <button th:onclick="'viewApplication(' + ${app.id} + ')'" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-eye"></i> View
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${userApplications.empty}">
+                                        <td colspan="6" class="text-center">
+                                            <div class="no-applications">
+                                                <i class="fas fa-file-contract fa-3x"></i>
+                                                <h3>No Applications Found</h3>
+                                                <p>You haven't submitted any loan applications yet.</p>
+                                                <a href="/apply" class="btn btn-primary">Apply for Loan</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Castle Financial Services</h3>
+                    <p>Your trusted partner for financial solutions</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/loan-types">Loan Types</a></li>
+                        <li><a href="/apply">Apply Now</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                    <p><i class="fas fa-envelope"></i> info@Castle.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Castle Financial Services. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+        function viewApplication(applicationId) {
+            // Redirect to application details page
+            window.location.href = '/application/' + applicationId;
+        }
+    </script>
+</body>
+</html>

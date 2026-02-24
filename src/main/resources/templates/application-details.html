@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Details - Castle Financial Services</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <i class="fas fa-landmark"></i> Castle
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/apply">Apply Now</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/dashboard" class="active">Dashboard</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+                <div class="nav-buttons">
+                    <div th:if="${username}" class="user-info">
+                        <span class="welcome-text">Welcome, <strong th:text="${username}"></strong></span>
+                        <!-- Show admin buttons only if user is admin -->
+                        <div th:if="${role == 'ADMIN'}" class="admin-buttons">
+                            <a href="/admin/dashboard" class="btn btn-primary">Admin Panel</a>
+                        </div>
+                        <a href="/profile" class="btn btn-outline">Profile</a>
+                        <form th:action="@{/logout}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-primary">Logout</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="mobile-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Application Details Section -->
+    <section class="application-details-section">
+        <div class="container">
+            <div class="application-details-container">
+                <div class="details-header">
+                    <h1><i class="fas fa-file-contract"></i> Application Details</h1>
+                    <p>View details of your loan application</p>
+                </div>
+                
+                <div class="application-card" th:if="${application}">
+                    <div class="application-overview">
+                        <div class="overview-item">
+                            <span class="label">Application ID:</span>
+                            <span class="value" th:text="${'#APP' + application.id}"></span>
+                        </div>
+                        <div class="overview-item">
+                            <span class="label">Status:</span>
+                            <span th:class="'status-badge status-' + ${application.status?.toLowerCase()}" 
+                                  th:text="${application.status == 'APPROVED' ? 'RUNNING' : 
+                                           application.status == 'REJECTED' ? 'COMPLETED' : 
+                                           application.status}">PENDING</span>
+                        </div>
+                        <div class="overview-item">
+                            <span class="label">Applied Date:</span>
+                            <span class="value" th:text="${#temporals.format(application.applicationDate, 'dd-MM-yyyy HH:mm')}"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="application-info">
+                        <h2>Personal Information</h2>
+                        <div class="info-row">
+                            <div class="info-item">
+                                <label>Full Name</label>
+                                <p th:text="${application.fullName}"></p>
+                            </div>
+                            <div class="info-item">
+                                <label>Email</label>
+                                <p th:text="${application.email}"></p>
+                            </div>
+                            <div class="info-item">
+                                <label>Phone</label>
+                                <p th:text="${application.phone}"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="application-info">
+                        <h2>Loan Details</h2>
+                        <div class="info-row">
+                            <div class="info-item">
+                                <label>Loan Type</label>
+                                <p th:text="${application.loanType}"></p>
+                            </div>
+                            <div class="info-item">
+                                <label>Loan Amount</label>
+                                <p th:text="'₹' + ${#numbers.formatDecimal(application.loanAmount, 1, 2)}"></p>
+                            </div>
+                            <div class="info-item">
+                                <label>Employment Status</label>
+                                <p th:text="${application.employmentStatus}"></p>
+                            </div>
+                            <div class="info-item">
+                                <label>Monthly Income</label>
+                                <p th:text="'₹' + ${#numbers.formatDecimal(application.monthlyIncome, 1, 2)}"></p>
+                            </div>
+                            <div class="info-item">
+                                <label>Company Name</label>
+                                <p th:text="${application.companyName ?: 'N/A'}"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="application-info">
+                        <h2>Address Information</h2>
+                        <div class="info-row">
+                            <div class="info-item full-width">
+                                <label>Address</label>
+                                <p th:text="${application.address}"></p>
+                            </div>
+                            <div class="info-item">
+                                <label>City</label>
+                                <p th:text="${application.city}"></p>
+                            </div>
+                            <div class="info-item">
+                                <label>State</label>
+                                <p th:text="${application.state}"></p>
+                            </div>
+                            <div class="info-item">
+                                <label>Pincode</label>
+                                <p th:text="${application.pincode}"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="actions">
+                        <a href="/dashboard" class="btn btn-primary">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+                
+                <div th:unless="${application}" class="no-application">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Application Not Found</h3>
+                    <p>The application you're looking for doesn't exist or you don't have permission to view it.</p>
+                    <a href="/dashboard" class="btn btn-primary">Go to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Castle Financial Services</h3>
+                    <p>Your trusted partner for financial solutions</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/loan-types">Loan Types</a></li>
+                        <li><a href="/apply">Apply Now</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                    <p><i class="fas fa-envelope"></i> info@Castle.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Castle Financial Services. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>
