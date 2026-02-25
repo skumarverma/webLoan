@@ -59,8 +59,18 @@ public class LoanApplication {
     
     @Column(name = "status")
     private String status = "PENDING";
-    
+
+    @Column(name = "admin_reply", length = 2000)
+    private String adminReply;
+
     // Getter and setter for status
+    public String getAdminReply() {
+        return adminReply;
+    }
+    
+    public void setAdminReply(String adminReply) {
+        this.adminReply = adminReply;
+    }
     public String getStatus() {
         return status;
     }

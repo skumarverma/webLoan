@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Loan Status | Castle Financial Services</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f7fb;
+            text-align: center;
+            margin-top: 80px;
+        }
+        .box {
+            width: 400px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        input {
+            width: 95%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        button {
+            padding: 12px 25px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Check Your Loan Status</h2>
+
+    <form th:action="@{/loan-status}" method="post">
+        <input type="text" name="phone" placeholder="Enter your registered phone number" required>
+        <br>
+        <button type="submit">Check Status</button>
+    </form>
+
+    <!-- Show Status -->
+    <div class="result success" th:if="${status != null}">
+        <p><b>Loan Status:</b> <span th:text="${status}"></span></p>
+        <p><b>Admin Reply:</b> <span th:text="${adminReply}"></span></p>
+    </div>
+
+    <!-- Error Message -->
+    <div class="result error" th:if="${error != null}">
+        <p th:text="${error}"></p>
+    </div>
+
+</div>
+
+</body>
+</html>
