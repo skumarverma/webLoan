@@ -100,12 +100,12 @@
                             <td th:text="${user.email}">john@example.com</td>
                             <td th:text="${user.phone != null ? user.phone : 'N/A'}">9876543210</td>
                             <td>
-                                <span th:class="'role-badge role-' + ${user.role?.toLowerCase()}" 
-                                      th:text="${user.role}">USER</span>
+                                <span th:class="'role-badge role-' + (${user.role} != null ? user.role.toLowerCase() : 'user')" 
+                                th:text="${user.role != null ? user.role : 'USER'}">USER</span>
                             </td>
                             <td>
                                 <span th:class="'status-badge status-' + ${user.isActive ? 'active' : 'inactive'}" 
-                                      th:text="${user.isActive ? 'ACTIVE' : 'INACTIVE'}">ACTIVE</span>
+                                    th:text="${user.isActive ? 'ACTIVE' : 'INACTIVE'}">ACTIVE</span>
                             </td>
                             <td th:text="${user.createdDate != null ? #temporals.format(user.createdDate, 'dd-MM-yyyy') : 'N/A'}">
                                 15-02-2026
