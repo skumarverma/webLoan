@@ -233,4 +233,107 @@ public class AdminController {
         User adminUser = (User) session.getAttribute("adminUser");
         return adminUser != null && "ADMIN".equals(adminUser.getRole());
     }
+// ================= ADMIN MESSAGES PAGE =================
+@GetMapping("/messages")
+public String adminMessages(Model model, HttpSession session) {
+
+    if (!isAdminLoggedIn(session)) {
+        return "redirect:/admin/login";
+    }
+
+    List<ContactMessage> allMessages = contactMessageRepository.findAll();
+    model.addAttribute("allMessages", allMessages);
+    model.addAttribute("totalMessages", allMessages.size());
+
+    return "admin-messages"; // matches your HTML file name
+}
+
+// ================= GET SINGLE MESSAGE (FOR MODAL) =================
+@GetMapping("/message/{id}")
+@ResponseBody
+public ResponseEntity<Map<String, Object>> getMessageById(@PathVariable Long id,
+                                                         HttpSession session) {
+
+    Map<String, Object> result = new HashMap<>();
+
+    if (!isAdminLoggedIn(session)) {
+        result.put("success", false);
+        result.put("message", "Not authorized");
+        return ResponseEntity.status(401).body(result);
+    }
+
+    Optional<ContactMessage> msgOpt = contactMessageRepository.findById(id);
+
+    if (msgOpt.isEmpty()) {
+        result.put("success", false);
+        result.put("message", "Message not found");
+        return ResponseEntity.badRequest().body(result);
+    }
+
+    ContactMessage msg = msgOpt.get();
+
+    Map<String, Object> data = new HashMap<>();
+    data.put("id", msg.getId());
+    data.put("fullName", msg.getFullName());
+    data.put("email", msg.getEmail());
+    data.put("phone", msg.getPhone());
+    data.put("subject", msg.getSubject());
+    data.put("message", msg.getMessage());
+    data.put("status", msg.getStatus());
+    data.put("createdDate", msg.getCreatedDate() != null
+            ? msg.getCreatedDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"))
+            : "N/A");
+
+    result.put("success", true);
+    result.put("data", data);
+
+    return ResponseEntity.ok(result);
+}
+
+// ================= MARK MESSAGE AS READ =================
+@PostMapping("/message/{id}/read")
+@ResponseBody
+public ResponseEntity<Map<String, Object>> markMessageAsRead(@PathVariable Long id,
+                                                             HttpSession session) {
+
+    Map<String, Object> result = new HashMap<>();
+
+    if (!isAdminLoggedIn(session)) {
+        result.put("success", false);
+        result.put("message", "Not authorized");
+        return ResponseEntity.status(401).body(result);
+    }
+
+    Optional<ContactMessage> msgOpt = contactMessageRepository.findById(id);
+
+    if (msgOpt.isEmpty()) {
+        result.put("success", false);
+        result.put("message", "Message not found");
+        return ResponseEntity.badRequest().body(result);
+    }
+
+    ContactMessage msg = msgOpt.get();
+    msg.setStatus("READ");
+    contactMessageRepository.save(msg);
+
+    result.put("success", true);
+    result.put("message", "Message marked as read");
+
+    return ResponseEntity.ok(result);
+}
+
+// ================= ADMIN USERS PAGE =================
+@GetMapping("/users")
+public String adminUsers(Model model, HttpSession session) {
+
+    if (!isAdminLoggedIn(session)) {
+        return "redirect:/admin/login";
+    }
+
+    List<User> users = userRepository.findAll();
+    model.addAttribute("users", users);
+    model.addAttribute("totalUsers", users.size());
+
+    return "admin-users";
+}
 }
