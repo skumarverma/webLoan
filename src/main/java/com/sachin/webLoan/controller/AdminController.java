@@ -331,7 +331,13 @@ public String adminUsers(Model model, HttpSession session) {
     }
 
     List<User> users = userRepository.findAll();
-    model.addAttribute("users", users);
+    
+    if (users == null) {
+        users = new ArrayList<>();
+    }
+
+    // 🔥 CHANGE THIS LINE
+    model.addAttribute("allUsers", users); // instead of "users"
     model.addAttribute("totalUsers", users.size());
 
     return "admin-users";
