@@ -98,7 +98,7 @@
                             <td th:text="${user.fullName}">John Doe</td>
                             <td th:text="${user.username}">johndoe</td>
                             <td th:text="${user.email}">john@example.com</td>
-                            <td th:text="${user.phone ?: 'N/A'}">9876543210</td>
+                            <td th:text="${user.phone != null ? user.phone : 'N/A'}">9876543210</td>
                             <td>
                                 <span th:class="'role-badge role-' + ${user.role?.toLowerCase()}" 
                                       th:text="${user.role}">USER</span>
@@ -107,7 +107,9 @@
                                 <span th:class="'status-badge status-' + ${user.isActive ? 'active' : 'inactive'}" 
                                       th:text="${user.isActive ? 'ACTIVE' : 'INACTIVE'}">ACTIVE</span>
                             </td>
-                            <td th:text="${#temporals.format(user.createdDate, 'dd-MM-yyyy')}">15-02-2026</td>
+                            <td th:text="${user.createdDate != null ? #temporals.format(user.createdDate, 'dd-MM-yyyy') : 'N/A'}">
+                                15-02-2026
+                            </td>
                             <td>
                                 <button th:onclick="'viewUser(' + ${user.id} + ')'" class="btn btn-sm btn-primary">
                                     <i class="fas fa-eye"></i> View
