@@ -93,7 +93,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="user : ${users}">
+                        <tr th:each="user : ${allUsers}">
                             <td th:text="${user.id}">#1</td>
                             <td th:text="${user.fullName}">John Doe</td>
                             <td th:text="${user.username}">johndoe</td>
@@ -125,7 +125,7 @@
                                 </button>
                             </td>
                         </tr>
-                        <tr th:if="${allUsers == null or #lists.isEmpty(allUsers)}">
+                        <tr th:if="${#lists.isEmpty(allUsers)}">  ✅
                             <td colspan="9" class="text-center">No users found</td>
                         </tr>
                     </tbody>
@@ -133,7 +133,7 @@
             </div>
             
             <div class="pagination" th:if="${!#lists.isEmpty(allUsers)}">
-                <span>Showing <span th:text="${allUsers.size()}"></span> of <span th:text="${totalUsers}"></span> users</span>
+                <span>Showing <span th:text="${totalUsers}"></span>  ✅ of <span th:text="${totalUsers}"></span> users</span>
             </div>
         </div>
     </section>

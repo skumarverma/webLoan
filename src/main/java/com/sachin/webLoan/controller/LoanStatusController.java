@@ -26,15 +26,18 @@ public class LoanStatusController {
 public String checkLoanStatus(@RequestParam("phone") String phone, Model model) {
 
     try {
-        // Remove spaces, dashes, and formatting
+        // 🔥 CLEAN PHONE NUMBER (remove spaces, +91, dashes etc)
         String cleanPhone = phone.replaceAll("[^0-9]", "");
-        Optional<LoanApplication> loanOptional = loanRepository.findFirstByPhoneContaining(cleanPhone);
+
+        Optional<LoanApplication> loanOptional =
+                loanRepository.findFirstByPhoneContaining(cleanPhone);
 
         if (loanOptional.isPresent()) {
             LoanApplication loan = loanOptional.get();
             model.addAttribute("loan", loan);
         } else {
-            model.addAttribute("error", "Phone number not found. Please enter correct registered number.");
+            model.addAttribute("error",
+                    "Phone number not found. Please enter correct registered number.");
         }
 
     } catch (Exception e) {
