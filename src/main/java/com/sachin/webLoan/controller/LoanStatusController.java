@@ -23,9 +23,12 @@ public class LoanStatusController {
 
     // Check phone and show status + admin reply
     @PostMapping("/loan-status")
-    public String checkLoanStatus(@RequestParam("phone") String phone, Model model) {
+public String checkLoanStatus(@RequestParam("phone") String phone, Model model) {
 
-        Optional<LoanApplication> loanOptional = loanRepository.findByPhone(phone);
+    try {
+        // Remove spaces, dashes, and formatting
+        String cleanPhone = phone.replaceAll("[^0-9]", "");
+        Optional<LoanApplication> loanOptional = loanRepository.findFirstByPhoneContaining(cleanPhone);
 
         if (loanOptional.isPresent()) {
             LoanApplication loan = loanOptional.get();
@@ -34,6 +37,11 @@ public class LoanStatusController {
             model.addAttribute("error", "Phone number not found. Please enter correct registered number.");
         }
 
-        return "loan-status";
+    } catch (Exception e) {
+        e.printStackTrace();
+        model.addAttribute("error", "Something went wrong. Please try again.");
     }
+
+    return "loan-status";
 }
+    }

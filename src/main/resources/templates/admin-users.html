@@ -98,14 +98,20 @@
                             <td th:text="${user.fullName}">John Doe</td>
                             <td th:text="${user.username}">johndoe</td>
                             <td th:text="${user.email}">john@example.com</td>
-                            <td th:text="${user.phone != null ? user.phone : 'N/A'}">9876543210</td>
-                            <td>
-                                <span th:class="'role-badge role-' + (${user.role} != null ? user.role.toLowerCase() : 'user')" 
-                                th:text="${user.role != null ? user.role : 'USER'}">USER</span>
+                            <td th:text="${user.phone != null ? #strings.replace(user.phone, '-', '') : 'N/A'}">
+                                9876543210
                             </td>
                             <td>
-                                <span th:class="'status-badge status-' + ${user.isActive ? 'active' : 'inactive'}" 
-                                    th:text="${user.isActive ? 'ACTIVE' : 'INACTIVE'}">ACTIVE</span>
+                                <span th:class="'status-badge status-' + (${user.isActive != null and user.isActive} ? 'active' : 'inactive')" 
+      th:text="${user.isActive != null and user.isActive ? 'ACTIVE' : 'INACTIVE'}">
+    ACTIVE
+</span>
+                            </td>
+                            <td>
+                                <span th:class="'status-badge status-' + (${user.isActive != null and user.isActive} ? 'active' : 'inactive')" 
+      th:text="${user.isActive != null and user.isActive ? 'ACTIVE' : 'INACTIVE'}">
+    ACTIVE
+</span>
                             </td>
                             <td th:text="${user.createdDate != null ? #temporals.format(user.createdDate, 'dd-MM-yyyy') : 'N/A'}">
                                 15-02-2026
