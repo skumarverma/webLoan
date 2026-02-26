@@ -183,22 +183,19 @@ public class HomeController {
         return "redirect:/";
     }
     
-    // Customer view page
+    // Public customer status page - search by phone number
     @GetMapping("/customer")
-    public String customerView(Model model, HttpSession session) {
-        String username = (String) session.getAttribute("username");
-        if (username != null) {
-            Optional<User> userOpt = userRepository.findByUsername(username);
-            if (userOpt.isPresent()) {
-                User user = userOpt.get();
-                model.addAttribute("user", user);
-                model.addAttribute("username", username);
-                model.addAttribute("role", user.getRole());
-                return "customer-view";
-            }
+    public String customerView(@RequestParam(value = "phone", required = false) String phone,
+                               Model model) {
+        model.addAttribute("searchPhone", phone);
+
+        if (phone != null && !phone.trim().isEmpty()) {
+            Optional<LoanApplication> appOpt =
+                    loanApplicationRepository.findFirstByPhoneContaining(phone.trim());
+            appOpt.ifPresent(application -> model.addAttribute("application", application));
         }
-        // If not logged in, redirect to home
-        return "redirect:/";
+
+        return "customer-view";
     }
     
     // Application details page

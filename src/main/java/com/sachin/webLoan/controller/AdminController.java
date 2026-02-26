@@ -184,8 +184,8 @@ public class AdminController {
     @PostMapping("/application/{id}/status")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> updateApplicationStatus(@PathVariable Long id,
-                                                                       @RequestBody Map<String, String> request,
-                                                                       HttpSession session) {
+                                                                    @RequestBody Map<String, String> request,
+                                                                    HttpSession session) {
 
         Map<String, Object> result = new HashMap<>();
 

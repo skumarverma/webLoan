@@ -41,48 +41,58 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1>Castle Financial Services</h1>
-                <p>Your trusted partner for all financial solutions</p>
-                <div class="hero-buttons">
-                    <a href="/apply" class="btn btn-primary">Apply for Loan</a>
-                    <a href="/contact" class="btn btn-outline">Contact Us</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features">
+    <!-- Customer Loan Status Section -->
+    <section class="status-section">
         <div class="container">
             <div class="section-header">
-                <h2>Why Choose Castle?</h2>
-                <p>We provide the best financial services tailored to your needs</p>
+                <h2>Check Your Loan Status</h2>
+                <p>Enter your registered phone number to see your latest loan application status.</p>
             </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-bolt"></i>
+
+            <div class="status-card">
+                <form action="/customer" method="get" class="status-form">
+                    <div class="form-group">
+                        <label for="phone">Registered Phone Number</label>
+                        <input type="tel"
+                               id="phone"
+                               name="phone"
+                               th:value="${searchPhone}"
+                               placeholder="Enter your phone number"
+                               required>
                     </div>
-                    <h3>Quick Approval</h3>
-                    <p>Get your loan approved within 24 hours with our fast processing system</p>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Check Status
+                    </button>
+                </form>
+            </div>
+
+            <div class="status-result" th:if="${searchPhone}">
+                <div th:if="${application}">
+                    <div class="status-summary">
+                        <h3>Application Found</h3>
+                        <p><strong>Applicant:</strong> <span th:text="${application.fullName}">John Doe</span></p>
+                        <p><strong>Loan Type:</strong> <span th:text="${application.loanType}">Personal Loan</span></p>
+                        <p><strong>Loan Amount:</strong>
+                            <span th:text="'₹' + ${#numbers.formatDecimal(application.loanAmount, 1, 2)}">₹50,000</span>
+                        </p>
+                        <p><strong>Current Status:</strong>
+                            <span th:class="'status-badge status-' + ${application.status?.toLowerCase()}"
+                                  th:text="${application.status}">PENDING</span>
+                        </p>
+                        <p><strong>Applied On:</strong>
+                            <span th:text="${application.applicationDate != null ?
+                                            #temporals.format(application.applicationDate, 'dd-MM-yyyy HH:mm')
+                                            : 'N/A'}">
+                                20-02-2026 10:30
+                            </span>
+                        </p>
+                    </div>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3>Secure & Reliable</h3>
-                    <p>Your financial data is protected with bank-level security measures</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-hand-holding-usd"></i>
-                    </div>
-                    <h3>Competitive Rates</h3>
-                    <p>Enjoy the best interest rates in the market with flexible repayment options</p>
+
+                <div class="no-result" th:unless="${application}">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <h3>No Application Found</h3>
+                    <p>No loan application found for this phone number. Please check the number or contact support.</p>
                 </div>
             </div>
         </div>
@@ -118,5 +128,74 @@
     </footer>
 
     <script th:src="@{/js/main.js}"></script>
+
+    <style>
+        .status-section {
+            padding: 80px 0;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+
+        .status-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 600px;
+            margin: 0 auto 32px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+            border: 1px solid #e2e8f0;
+        }
+
+        .status-form .form-group {
+            margin-bottom: 16px;
+        }
+
+        .status-form label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .status-form input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #cbd5f1;
+            font-size: 1rem;
+        }
+
+        .status-result {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .status-summary {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+            border: 1px solid #e2e8f0;
+        }
+
+        .status-summary p {
+            margin: 8px 0;
+            color: #334155;
+        }
+
+        .no-result {
+            text-align: center;
+            padding: 32px 24px;
+            background: #fff7ed;
+            color: #c05621;
+            border-radius: 16px;
+            border: 1px solid #fed7aa;
+        }
+
+        .no-result i {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+    </style>
 </body>
 </html>
