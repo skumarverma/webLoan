@@ -38,6 +38,16 @@ public class HomeController {
     @Autowired
     private LoanApplicationRepository loanApplicationRepository;
     
+    // Health check endpoint
+    @GetMapping("/health")
+    public ResponseEntity<Map<String, Object>> health() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "UP");
+        response.put("timestamp", System.currentTimeMillis());
+        response.put("service", "Castle Financial Services");
+        return ResponseEntity.ok(response);
+    }
+    
     // Home page (Landing Page)
     @GetMapping("/")
     public String home() {
