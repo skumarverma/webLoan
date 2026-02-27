@@ -183,16 +183,22 @@ public class HomeController {
         return "redirect:/";
     }
     
-    // Public customer status page - search by phone number
-    @GetMapping("/customer")
+    // Public customer loan status page - search by phone number (also used for /loan-status on Railway)
+    @GetMapping({"/customer", "/loan-status"})
     public String customerView(@RequestParam(value = "phone", required = false) String phone,
                                Model model) {
         model.addAttribute("searchPhone", phone);
 
         if (phone != null && !phone.trim().isEmpty()) {
-            Optional<LoanApplication> appOpt =
-                    loanApplicationRepository.findFirstByPhoneContaining(phone.trim());
-            appOpt.ifPresent(application -> model.addAttribute("application", application));
+            String normalizedInput = normalizePhone(phone);
+            if (!normalizedInput.isEmpty()) {
+                List<LoanApplication> allApplications = loanApplicationRepository.findAll();
+                Optional<LoanApplication> appOpt = allApplications.stream()
+                        .filter(app -> normalizedInput.equals(normalizePhone(app.getPhone())))
+                        .findFirst();
+
+                appOpt.ifPresent(application -> model.addAttribute("application", application));
+            }
         }
 
         return "customer-view";
@@ -296,6 +302,11 @@ public class HomeController {
                 return "apply";
             }
             
+            // Normalize phone to digits only before saving
+            if (loanApplication.getPhone() != null) {
+                loanApplication.setPhone(normalizePhone(loanApplication.getPhone()));
+            }
+
             // Save the loan application
             loanApplication.setStatus("PENDING");
             loanApplicationRepository.save(loanApplication);
@@ -308,5 +319,13 @@ public class HomeController {
             model.addAttribute("loanApplication", loanApplication);
             return "apply";
         }
+    }
+
+    // Utility: strip all non-digits from phone number
+    private String normalizePhone(String phone) {
+        if (phone == null) {
+            return "";
+        }
+        return phone.replaceAll("[^0-9]", "");
     }
 }
