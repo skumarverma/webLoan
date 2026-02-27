@@ -50,14 +50,17 @@
             </div>
 
             <div class="status-card">
-                <form action="/customer" method="get" class="status-form">
+                <form action="/loan-status" method="get" class="status-form">
                     <div class="form-group">
                         <label for="phone">Registered Phone Number</label>
-                        <input type="tel"
+                        <input type="text"
                                id="phone"
                                name="phone"
                                th:value="${searchPhone}"
                                placeholder="Enter your phone number"
+                               inputmode="numeric"
+                               pattern="[0-9]*"
+                               oninput="this.value=this.value.replace(/[^0-9]/g,'');"
                                required>
                     </div>
                     <button type="submit" class="btn btn-primary">
@@ -85,6 +88,10 @@
                                             : 'N/A'}">
                                 20-02-2026 10:30
                             </span>
+                        </p>
+                        <p th:if="${application.adminReply}">
+                            <strong>Message from Bank:</strong>
+                            <span th:text="${application.adminReply}">Your loan is under review...</span>
                         </p>
                     </div>
                 </div>
