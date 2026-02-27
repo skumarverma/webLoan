@@ -220,6 +220,47 @@ public class AdminController {
         return ResponseEntity.ok(result);
     }
 
+    // ================= DELETE APPLICATION =================
+    @DeleteMapping("/application/{id}/delete")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> deleteApplication(@PathVariable Long id,
+                                                                 HttpSession session) {
+        
+        Map<String, Object> result = new HashMap<>();
+        
+        if (!isAdminLoggedIn(session)) {
+            result.put("success", false);
+            result.put("message", "Not authorized");
+            return ResponseEntity.status(401).body(result);
+        }
+        
+        Optional<LoanApplication> appOpt = loanApplicationRepository.findById(id);
+        
+        if (appOpt.isEmpty()) {
+            result.put("success", false);
+            result.put("message", "Application not found");
+            return ResponseEntity.badRequest().body(result);
+        }
+        
+        try {
+            LoanApplication application = appOpt.get();
+            String applicantName = application.getFullName();
+            
+            // Delete the application
+            loanApplicationRepository.deleteById(id);
+            
+            result.put("success", true);
+            result.put("message", "Application for " + applicantName + " deleted successfully");
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message", "Failed to delete application: " + e.getMessage());
+        }
+        
+        return ResponseEntity.ok(result);
+    }
+    
     // ================= LOGOUT =================
     @PostMapping("/logout")
     public String logout(HttpSession session, RedirectAttributes redirectAttributes) {

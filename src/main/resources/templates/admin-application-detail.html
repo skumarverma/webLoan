@@ -51,6 +51,9 @@
                             <a href="/admin/applications" class="btn btn-outline">
                                 <i class="fas fa-arrow-left"></i> Back to Applications
                             </a>
+                            <button class="btn btn-danger" onclick="deleteApplication()" id="deleteBtn">
+                                <i class="fas fa-trash"></i> Delete Application
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -256,6 +259,46 @@
                 alert('Error updating status');
             });
         }
+        
+        function deleteApplication() {
+            const applicationId = [[${application.id}]];
+            const applicantName = [[${application.fullName}]];
+            
+            if (confirm(`Are you sure you want to delete the application for ${applicantName}? This action cannot be undone.`)) {
+                // Disable the delete button to prevent multiple clicks
+                const deleteBtn = document.getElementById('deleteBtn');
+                deleteBtn.disabled = true;
+                deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+                
+                // Send DELETE request
+                fetch(`/admin/application/${applicationId}/delete`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Application deleted successfully!');
+                        // Redirect to applications list
+                        window.location.href = '/admin/applications';
+                    } else {
+                        alert('Failed to delete application: ' + data.message);
+                        // Re-enable button if deletion failed
+                        deleteBtn.disabled = false;
+                        deleteBtn.innerHTML = '<i class="fas fa-trash"></i> Delete Application';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error deleting application');
+                    // Re-enable button if there was an error
+                    deleteBtn.disabled = false;
+                    deleteBtn.innerHTML = '<i class="fas fa-trash"></i> Delete Application';
+                });
+            }
+        }
     </script>
     
     <style>
@@ -273,6 +316,33 @@
         
         .header-actions {
             flex-shrink: 0;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-danger:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        }
+        
+        .btn-danger:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
         
         .application-summary {
