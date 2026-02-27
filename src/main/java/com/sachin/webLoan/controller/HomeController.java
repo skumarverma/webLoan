@@ -166,11 +166,10 @@ public class HomeController {
                 model.addAttribute("role", user.getRole());
                 
                 // Get user's loan applications for stats
-                List<LoanApplication> userApplications = loanApplicationRepository.findByEmail(user.getEmail());
-                
-                long applicationCount = userApplications.size();
-                long approvedCount = userApplications.stream().filter(app -> "APPROVED".equals(app.getStatus())).count();
-                long pendingCount = userApplications.stream().filter(app -> "PENDING".equals(app.getStatus())).count();
+                List<LoanApplication> allApplications = loanApplicationRepository.findAll();
+                long applicationCount =allApplications.size();
+                long approvedCount = allApplications.stream().filter(app -> "APPROVED".equals(app.getStatus())).count();
+                long pendingCount = allApplications.stream().filter(app -> "PENDING".equals(app.getStatus())).count();
                 
                 model.addAttribute("applicationCount", applicationCount);
                 model.addAttribute("approvedCount", approvedCount);
@@ -185,24 +184,34 @@ public class HomeController {
     
     // Public customer loan status page - search by phone number (also used for /loan-status on Railway)
     @GetMapping({"/customer", "/loan-status"})
-    public String customerView(@RequestParam(value = "phone", required = false) String phone,
-                               Model model) {
-        model.addAttribute("searchPhone", phone);
+public String customerView(
+        @RequestParam(value = "phone", required = false) String phone,
+        Model model) {
 
-        if (phone != null && !phone.trim().isEmpty()) {
-            String normalizedInput = normalizePhone(phone);
-            if (!normalizedInput.isEmpty()) {
-                List<LoanApplication> allApplications = loanApplicationRepository.findAll();
-                Optional<LoanApplication> appOpt = allApplications.stream()
-                        .filter(app -> normalizedInput.equals(normalizePhone(app.getPhone())))
-                        .findFirst();
+    model.addAttribute("searchPhone", phone);
 
-                appOpt.ifPresent(application -> model.addAttribute("application", application));
-            }
+    if (phone != null && !phone.trim().isEmpty()) {
+
+        String normalizedInput = normalizePhone(phone);
+
+        // ✅ Force exactly 10 digits only
+        if (normalizedInput.length() != 10) {
+            model.addAttribute("error", "Please enter valid 10 digit mobile number.");
+            return "customer-view";
         }
 
-        return "customer-view";
+        Optional<LoanApplication> appOpt =
+                loanApplicationRepository.findFirstByPhone(normalizedInput);
+
+        if (appOpt.isPresent()) {
+            model.addAttribute("application", appOpt.get());
+        } else {
+            model.addAttribute("error", "No application found for this number.");
+        }
     }
+
+    return "customer-view";
+}
     
     // Application details page
     @GetMapping("/application/{id}")
@@ -321,11 +330,22 @@ public class HomeController {
         }
     }
 
-    // Utility: strip all non-digits from phone number
     private String normalizePhone(String phone) {
-        if (phone == null) {
-            return "";
+
+        if (phone == null) return "";
+    
+        String digits = phone.replaceAll("[^0-9]", "");
+    
+        // Remove country code 91
+        if (digits.startsWith("91") && digits.length() == 12) {
+            digits = digits.substring(2);
         }
-        return phone.replaceAll("[^0-9]", "");
+    
+        // Remove leading 0
+        if (digits.startsWith("0") && digits.length() == 11) {
+            digits = digits.substring(1);
+        }
+    
+        return digits;
     }
 }

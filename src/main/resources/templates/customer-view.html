@@ -54,15 +54,17 @@
                 <form th:action="@{/loan-status}" method="get" class="status-form">
                     <div class="form-group">
                         <label for="phone">Registered Phone Number</label>
-                        <input type="text"
-                               id="phone"
-                               name="phone"
-                               th:value="${searchPhone}"
-                               placeholder="Enter your phone number"
-                               inputmode="numeric"
-                               pattern="[0-9]*"
-                               oninput="this.value=this.value.replace(/[^0-9]/g,'');"
-                               required>
+                <input type="text"
+                id="phone"
+                name="phone"
+                th:value="${searchPhone}"
+                placeholder="Enter 10 digit phone number"
+                inputmode="numeric"
+                maxlength="10"
+                pattern="[0-9]{10}"
+                oninput="this.value=this.value.replace(/[^0-9]/g,''); 
+                if(this.value.length > 10) this.value = this.value.slice(0,10);"
+                required>
                     </div>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-search"></i> Check Status
@@ -71,6 +73,13 @@
             </div>
 
             <div class="status-result" th:if="${searchPhone}">
+
+                <!-- 🔥 ADD THIS HERE -->
+                <div th:if="${error}" class="no-result">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <h3 th:text="${error}"></h3>
+                </div>
+            
                 <div th:if="${application}">
                     <div class="status-summary">
                         <h3>Application Found</h3>
