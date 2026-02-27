@@ -21,6 +21,7 @@
                     <li><a href="/apply">Apply Now</a></li>
                     <li><a href="/about">About</a></li>
                     <li><a href="/contact">Contact</a></li>
+                    <li><a href="/loan-status" class="active">Loan Status</a></li>
                 </ul>
                 <div class="nav-buttons">
                     <div th:if="${username}" class="user-info">
@@ -50,7 +51,7 @@
             </div>
 
             <div class="status-card">
-                <form action="/loan-status" method="get" class="status-form">
+                <form th:action="@{/loan-status}" method="get" class="status-form">
                     <div class="form-group">
                         <label for="phone">Registered Phone Number</label>
                         <input type="text"
@@ -74,9 +75,14 @@
                     <div class="status-summary">
                         <h3>Application Found</h3>
                         <p><strong>Applicant:</strong> <span th:text="${application.fullName}">John Doe</span></p>
+                        <p><strong>Email:</strong> <span th:text="${application.email}">john@example.com</span></p>
                         <p><strong>Loan Type:</strong> <span th:text="${application.loanType}">Personal Loan</span></p>
                         <p><strong>Loan Amount:</strong>
                             <span th:text="'₹' + ${#numbers.formatDecimal(application.loanAmount, 1, 2)}">₹50,000</span>
+                        </p>
+                        <p><strong>Employment:</strong> <span th:text="${application.employmentStatus}">Salaried</span></p>
+                        <p><strong>Monthly Income:</strong>
+                            <span th:text="'₹' + ${#numbers.formatDecimal(application.monthlyIncome, 1, 2)}">₹0</span>
                         </p>
                         <p><strong>Current Status:</strong>
                             <span th:class="'status-badge status-' + ${application.status?.toLowerCase()}"
