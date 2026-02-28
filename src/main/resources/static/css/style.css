@@ -271,6 +271,77 @@ body {
 
 
 
+/* Status Check Section on Homepage */
+.status-check-section {
+    margin-top: 40px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 30px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    max-width: 500px;
+    margin-top: 40px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.status-check-section h3 {
+    color: #fbbf24;
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.status-form .form-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.status-form input[type="text"] {
+    flex: 1;
+    min-width: 250px;
+    padding: 12px 15px;
+    border: 2px solid #fbbf24;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.95);
+    color: #0f172a;
+}
+
+.status-form input[type="text"]:focus {
+    outline: none;
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
+}
+
+.status-check-btn {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: #0f172a;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 5px 15px rgba(251, 191, 36, 0.4);
+}
+
+.status-check-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(251, 191, 36, 0.6);
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+/* End Status Check Section */
+
 /* Modern Hero Section */
 .hero {
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);

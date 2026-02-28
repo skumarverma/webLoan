@@ -87,6 +87,27 @@
                     <a href="/loan-types" class="apply-btn">
                         <i class="fas fa-paper-plane"></i> Apply Now
                     </a>
+                    
+                    <!-- Loan Status Check Section -->
+                    <div class="status-check-section">
+                        <h3>Check Your Loan Status</h3>
+                        <form th:action="@{/customer}" method="get" class="status-form">
+                            <div class="form-group">
+                                <input type="text"
+                                       name="phone"
+                                       placeholder="Enter 10 digit phone number"
+                                       inputmode="numeric"
+                                       maxlength="10"
+                                       pattern="[0-9]{10}"
+                                       oninput="this.value=this.value.replace(/[^0-9]/g,''); 
+                                       if(this.value.length > 10) this.value = this.value.slice(0,10);"
+                                       required>
+                                <button type="submit" class="status-check-btn">
+                                    <i class="fas fa-search"></i> Check Status
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
                 
                 <div class="hero-image">
