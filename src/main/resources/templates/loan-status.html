@@ -69,7 +69,7 @@
                 </form>
             </div>
 
-            <div class="status-result" th:if="${loan or error}">
+            <div class="status-result" th:if="${loan != null or error != null}">
                 <div th:if="${error}" class="no-result">
                     <i class="fas fa-exclamation-circle"></i>
                     <h3 th:text="${error}"></h3>
