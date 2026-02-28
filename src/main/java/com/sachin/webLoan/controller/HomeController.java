@@ -214,7 +214,7 @@ public String customerView(
         }
 
         Optional<LoanApplication> appOpt =
-                loanApplicationRepository.findFirstByPhone(normalizedInput);
+                loanApplicationRepository.findFirstByPhoneContaining(normalizedInput);
 
         if (appOpt.isPresent()) {
             model.addAttribute("application", appOpt.get());

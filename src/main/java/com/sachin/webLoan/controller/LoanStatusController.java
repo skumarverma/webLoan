@@ -30,7 +30,7 @@ public String checkLoanStatus(@RequestParam("phone") String phone, Model model) 
         String cleanPhone = phone.replaceAll("[^0-9]", "");
 
         Optional<LoanApplication> loanOptional =
-                loanRepository.findFirstByPhone(cleanPhone);
+                loanRepository.findFirstByPhoneContaining(cleanPhone);
 
         if (loanOptional.isPresent()) {
             LoanApplication loan = loanOptional.get();
