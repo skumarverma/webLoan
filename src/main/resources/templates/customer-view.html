@@ -21,7 +21,7 @@
                     <li><a href="/apply">Apply Now</a></li>
                     <li><a href="/about">About</a></li>
                     <li><a href="/contact">Contact</a></li>
-                    <li><a href="/loan-status" class="active">Loan Status</a></li>
+                    <li><a href="/customer" class="active">Loan Status</a></li>
                 </ul>
                 <div class="nav-buttons">
                     <div th:if="${username}" class="user-info">
@@ -51,7 +51,7 @@
             </div>
 
             <div class="status-card">
-                <form th:action="@{/loan-status}" method="get" class="status-form">
+                <form th:action="@{/customer}" method="get" class="status-form">
                     <div class="form-group">
                         <label for="phone">Registered Phone Number</label>
                 <input type="text"

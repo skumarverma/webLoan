@@ -192,8 +192,8 @@ public class HomeController {
         return "redirect:/";
     }
     
-    // Public customer loan status page - search by phone number (also used for /loan-status on Railway)
-    @GetMapping({"/customer", "/loan-status"})
+    // Public customer loan status page - search by phone number
+    @GetMapping("/customer")
 public String customerView(
         @RequestParam(value = "phone", required = false) String phone,
         Model model) {
