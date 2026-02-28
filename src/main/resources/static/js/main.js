@@ -164,12 +164,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const start = e.target.selectionStart;
             const oldValue = e.target.value;
             
-            // Remove all non-digits and format
+            // Remove all non-digits
             let value = oldValue.toString().replace(/\D/g, '');
-            if (value.length >= 5) {
+            if (value.length > 10) {
                 isFormatting = true;
-                value = value.replace(/(\d{5})(\d{0,5})/, '$1-$2');
-                e.target.value = value;
+                e.target.value = value.substring(0, 10);
                 
                 // Calculate new cursor position based on formatted value
                 const newLength = e.target.value.length;
