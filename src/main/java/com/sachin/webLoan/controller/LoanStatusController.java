@@ -17,7 +17,9 @@ public class LoanStatusController {
 
     // Open Loan Status Page
     @GetMapping("/loan-status")
-    public String loanStatusPage() {
+    public String loanStatusPage(Model model) {
+        // Initialize with empty state to avoid null issues in template
+        model.addAttribute("showForm", true);
         return "loan-status";
     }
 

@@ -110,6 +110,11 @@
                     <p><strong>Pincode:</strong> <span th:text="${loan.pincode}">400001</span></p>
                 </div>
             </div>
+            
+            <!-- Show initial message when no search has been performed -->
+            <div class="initial-state" th:unless="${loan != null || error != null}" style="text-align: center; padding: 30px;">
+                <p style="color: #64748b; font-size: 1.1rem;">Enter your phone number above to check your loan application status.</p>
+            </div>
         </div>
     </section>
 
