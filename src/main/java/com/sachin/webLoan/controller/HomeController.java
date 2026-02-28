@@ -219,7 +219,7 @@ public String customerView(
         if (appOpt.isPresent()) {
             model.addAttribute("application", appOpt.get());
         } else {
-            model.addAttribute("error", "No application found for this number.");
+            model.addAttribute("error", "Please enter valid no.");
         }
     }
 
