@@ -2,73 +2,215 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Loan Status | Castle Financial Services</title>
-    <style>
-        body {
-            font-family: Arial;
-            background: #f4f7fb;
-            text-align: center;
-            margin-top: 80px;
-        }
-        .box {
-            width: 400px;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        input {
-            width: 95%;
-            padding: 12px;
-            margin: 15px 0;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
-        button {
-            padding: 12px 25px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        .result {
-            margin-top: 20px;
-            font-size: 18px;
-        }
-        .error {
-            color: red;
-            font-weight: bold;
-        }
-        .success {
-            color: green;
-            font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <i class="fas fa-landmark"></i> Castle
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/apply">Apply Now</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                    <li><a href="/loan-status" class="active">Loan Status</a></li>
+                </ul>
+                <div class="nav-buttons">
+                    <div th:if="${username}" class="user-info">
+                        <span class="welcome-text">Welcome, <strong th:text="${username}"></strong></span>
+                        <!-- Show admin buttons only if user is admin -->
+                        <div th:if="${role == 'ADMIN'}" class="admin-buttons">
+                            <a href="/admin/dashboard" class="btn btn-primary">Admin Panel</a>
+                        </div>
+                        <form th:action="@{/logout}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-outline">Logout</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="mobile-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-<div class="box">
-    <h2>Check Your Loan Status</h2>
+    <!-- Loan Status Section -->
+    <section class="status-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Check Your Loan Status</h2>
+                <p>Enter your registered phone number to see your latest loan application status.</p>
+            </div>
 
-    <form th:action="@{/loan-status}" method="post">
-        <input type="text" name="phone" placeholder="Enter your registered phone number" required>
-        <br>
-        <button type="submit">Check Status</button>
-    </form>
+            <div class="status-card">
+                <form th:action="@{/loan-status}" method="post" class="status-form">
+                    <div class="form-group">
+                        <label for="phone">Registered Phone Number</label>
+                        <input type="text"
+                               id="phone"
+                               name="phone"
+                               placeholder="Enter 10 digit phone number"
+                               inputmode="numeric"
+                               maxlength="10"
+                               pattern="[0-9]{10}"
+                               oninput="this.value=this.value.replace(/[^0-9]/g,''); 
+                               if(this.value.length > 10) this.value = this.value.slice(0,10);"
+                               required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Check Status
+                    </button>
+                </form>
+            </div>
 
-    <!-- Show Status -->
-    <div class="result success" th:if="${status != null}">
-        <p><b>Loan Status:</b> <span th:text="${status}"></span></p>
-        <p><b>Admin Reply:</b> <span th:text="${adminReply}"></span></p>
-    </div>
+            <div class="status-result" th:if="${loan or error}">
+                <div th:if="${error}" class="no-result">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <h3 th:text="${error}"></h3>
+                </div>
+            
+                <div th:if="${loan}" class="status-summary">
+                    <h3>Application Found</h3>
+                    <p><strong>Applicant:</strong> <span th:text="${loan.fullName}">John Doe</span></p>
+                    <p><strong>Email:</strong> <span th:text="${loan.email}">john@example.com</span></p>
+                    <p><strong>Phone:</strong> <span th:text="${loan.phone}">9876543210</span></p>
+                    <p><strong>Loan Type:</strong> <span th:text="${loan.loanType}">Personal Loan</span></p>
+                    <p><strong>Loan Amount:</strong>
+                        <span th:text="'₹' + ${#numbers.formatDecimal(loan.loanAmount, 1, 2)}">₹50,000</span>
+                    </p>
+                    <p><strong>Employment:</strong> <span th:text="${loan.employmentStatus}">Salaried</span></p>
+                    <p><strong>Monthly Income:</strong>
+                        <span th:text="'₹' + ${#numbers.formatDecimal(loan.monthlyIncome, 1, 2)}">₹45,000</span>
+                    </p>
+                    <p th:if="${loan.companyName}"><strong>Company:</strong> <span th:text="${loan.companyName}">Tech Solutions</span></p>
+                    <p><strong>Current Status:</strong>
+                        <span th:class="'status-badge status-' + ${loan.status?.toLowerCase()}"
+                              th:text="${loan.status}">PENDING</span>
+                    </p>
+                    <p><strong>Applied On:</strong>
+                        <span th:text="${loan.applicationDate != null ?
+                                        #temporals.format(loan.applicationDate, 'dd-MM-yyyy HH:mm')
+                                        : 'N/A'}">
+                            20-02-2026 10:30
+                        </span>
+                    </p>
+                    <p th:if="${loan.adminReply}">
+                        <strong>Message from Bank:</strong>
+                        <span th:text="${loan.adminReply}">Your loan is under review...</span>
+                    </p>
+                    <p><strong>Address:</strong> <span th:text="${loan.address}">123 Main Street</span></p>
+                    <p><strong>City:</strong> <span th:text="${loan.city}">Mumbai</span></p>
+                    <p><strong>State:</strong> <span th:text="${loan.state}">Maharashtra</span></p>
+                    <p><strong>Pincode:</strong> <span th:text="${loan.pincode}">400001</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <!-- Error Message -->
-    <div class="result error" th:if="${error != null}">
-        <p th:text="${error}"></p>
-    </div>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Castle Financial Services</h3>
+                    <p>Your trusted partner for financial solutions</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/loan-types">Loan Types</a></li>
+                        <li><a href="/apply">Apply Now</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                    <p><i class="fas fa-envelope"></i> info@castle.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Castle Financial Services. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 
-</div>
+    <script th:src="@{/js/main.js}"></script>
+    
+    <style>
+        .status-section {
+            padding: 80px 0;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
 
+        .status-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 600px;
+            margin: 0 auto 32px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+            border: 1px solid #e2e8f0;
+        }
+
+        .status-form .form-group {
+            margin-bottom: 16px;
+        }
+
+        .status-form label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .status-form input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #cbd5f1;
+            font-size: 1rem;
+        }
+
+        .status-result {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .status-summary {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+            border: 1px solid #e2e8f0;
+        }
+
+        .status-summary p {
+            margin: 8px 0;
+            color: #334155;
+        }
+
+        .no-result {
+            text-align: center;
+            padding: 32px 24px;
+            background: #fff7ed;
+            color: #c05621;
+            border-radius: 16px;
+            border: 1px solid #fed7aa;
+        }
+
+        .no-result i {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+    </style>
 </body>
 </html>
