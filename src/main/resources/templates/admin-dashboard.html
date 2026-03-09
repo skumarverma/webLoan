@@ -130,7 +130,7 @@
                                         <button th:onclick="'manageStatus(' + ${app.id} + ')'" class="btn btn-sm btn-warning">
                                             <i class="fas fa-edit"></i> Manage Status
                                         </button>
-                                        <button th:onclick="'deleteApplication(' + ${app.id} + ', \'' + ${app.fullName} + '\')'" class="btn btn-sm btn-danger">
+                                        <button th:onclick="'deleteApplication(' + ${app.id} + ', \&quot;' + ${app.fullName} + '\&quot;)'" class="btn btn-sm btn-danger">
                                             <i class="fas fa-trash"></i> Delete
                                         </button>
                                     </td>
