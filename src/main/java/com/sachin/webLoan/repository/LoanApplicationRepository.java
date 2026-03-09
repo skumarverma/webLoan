@@ -12,5 +12,5 @@ public interface LoanApplicationRepository extends JpaRepository<LoanApplication
     List<LoanApplication> findByEmail(String email);
     List<LoanApplication> findByLoanType(String loanType);
 
-    Optional<LoanApplication> findFirstByPhone(String phone);// ⭐ Important
+    Optional<LoanApplication> findFirstByPhoneContaining(String phone);// ⭐ Important
 }

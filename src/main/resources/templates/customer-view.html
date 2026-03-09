@@ -21,8 +21,7 @@
                     <li><a href="/apply">Apply Now</a></li>
                     <li><a href="/about">About</a></li>
                     <li><a href="/contact">Contact</a></li>
-                    <li><a href="/customer" class="active">Loan Status</a></li>
-                </ul>
+                    </ul>
                 <div class="nav-buttons">
                     <div th:if="${username}" class="user-info">
                         <span class="welcome-text">Welcome, <strong th:text="${username}"></strong></span>
@@ -43,7 +42,7 @@
     </nav>
 
     <!-- Customer Loan Status Section -->
-    <section class="status-section">
+    <!--<section class="status-section">
         <div class="container">
             <div class="section-header">
                 <h2>Check Your Loan Status</h2>
@@ -74,7 +73,7 @@
 
             <div class="status-result" th:if="${searchPhone}">
 
-                <!-- 🔥 ADD THIS HERE -->
+                <!-- 🔥 ADD THIS HERE --
                 <div th:if="${error}" class="no-result">
                     <i class="fas fa-exclamation-circle"></i>
                     <h3 th:text="${error}"></h3>
@@ -118,7 +117,8 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> 
+                -->
 
     <!-- Footer -->
     <footer class="footer">
