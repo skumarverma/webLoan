@@ -130,6 +130,9 @@
                                         <button th:onclick="'manageStatus(' + ${app.id} + ')'" class="btn btn-sm btn-warning">
                                             <i class="fas fa-edit"></i> Manage Status
                                         </button>
+                                        <button th:onclick="'deleteApplication(' + ${app.id} + ', \'' + ${app.fullName} + '\')'" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
                                     </td>
                                 </tr>
                                 <tr th:if="${recentApplications == null or #lists.isEmpty(recentApplications)}">
@@ -190,6 +193,28 @@
         .dashboard-actions .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        /* Delete button styles */
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+        
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        }
+        
+        .btn-sm {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            margin: 2px;
         }
     </style>
     <script>
@@ -262,6 +287,37 @@
             if (modal && event.target === modal) {
                 closeModal();
             }
+        }
+        
+        // Delete application function
+        function deleteApplication(applicationId, applicantName) {
+            // Confirm deletion with admin
+            const confirmed = confirm(`Are you sure you want to permanently delete the application of "${applicantName}"?\n\nThis action cannot be undone and all customer data will be lost!`);
+            
+            if (!confirmed) {
+                return; // User cancelled
+            }
+            
+            // Send DELETE request to server
+            fetch(`/admin/application/${applicationId}/delete`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Application deleted successfully!');
+                    location.reload(); // Refresh page to show updated list
+                } else {
+                    alert('Failed to delete application: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error deleting application');
+            });
         }
     </script>
 </body>
