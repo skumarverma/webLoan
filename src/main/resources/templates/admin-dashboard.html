@@ -130,7 +130,10 @@
                                         <button th:onclick="'manageStatus(' + ${app.id} + ')'" class="btn btn-sm btn-warning">
                                             <i class="fas fa-edit"></i> Manage Status
                                         </button>
-                                        <button th:onclick="'deleteApplication(' + ${app.id} + ', \&quot;' + ${app.fullName} + '\&quot;)'" class="btn btn-sm btn-danger">
+                                        <button onclick="deleteApplication(this)" 
+                                                th:data-app-id="${app.id}" 
+                                                th:data-app-name="${app.fullName}" 
+                                                class="btn btn-sm btn-danger">
                                             <i class="fas fa-trash"></i> Delete
                                         </button>
                                     </td>
@@ -290,7 +293,11 @@
         }
         
         // Delete application function
-        function deleteApplication(applicationId, applicantName) {
+        function deleteApplication(button) {
+            // Get application ID and name from data attributes
+            const applicationId = button.getAttribute('data-app-id');
+            const applicantName = button.getAttribute('data-app-name');
+            
             // Confirm deletion with admin
             const confirmed = confirm(`Are you sure you want to permanently delete the application of "${applicantName}"?\n\nThis action cannot be undone and all customer data will be lost!`);
             
